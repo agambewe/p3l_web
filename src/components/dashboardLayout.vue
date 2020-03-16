@@ -29,10 +29,9 @@
                 </v-list-item> 
             </v-list> 
             <template v-slot:append> 
-                <!-- <div class="pa-2">
-                    <v-btn block v-if="logwhat" @click="submitLogout()">Logout</v-btn>
-                    <v-btn block v-else @click="submitLogin()">Login</v-btn>
-                </div> -->
+                <div class="pa-2">
+                    <v-btn block @click="submitLogout()"><v-icon>mdi-logout</v-icon></v-btn>
+                </div>
             </template> 
         </v-navigation-drawer> 
         <v-app-bar dark app fixed clipped-right height="75px" :src="bg"> 
@@ -93,6 +92,12 @@ export default {
     mounted () {
     },
     methods: {
+        submitLogout() {
+            localStorage.removeItem('username')
+            this.$router.push({
+                    name: 'login'
+                })
+        },
     },
     computed: {
     bg () {

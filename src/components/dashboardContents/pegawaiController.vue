@@ -2,16 +2,22 @@
     <v-container dark>
         <v-card>
             <v-container grid-list-md mb-0>
-                <h2 class="text-md-center">Pegawai</h2>
+                <h2 class="text-md-center" style="text-shadow: 2px 0px 4px #00000">Data Pegawai</h2>
                 <v-layout row wrap style="margin:10px">
-                    <v-flex xs6 class="text-right">
+                    <!-- <v-flex xs12 class="text-left">
                         <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details>
                         </v-text-field>
-                    </v-flex>
-                    <v-divider class="mx-4" inset vertical></v-divider>
+                    </v-flex> -->
                     <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on }">
-                            <v-btn color="secondary" dark class="mb-2" v-on="on" @click="clear()">tambah pegawai</v-btn>
+                            <v-flex xs8 style="float:right;widht:300">
+                                <v-btn color="secondary" dark class="mb-1" v-on="on" @click="clear()">tambah pegawai</v-btn>
+                                <v-divider class="mx-1" inset vertical></v-divider>
+                                <v-btn color="secondary" dark class="mb-1" v-on="on" router to="/pegawai/terhapus">pegawai terhapus</v-btn>
+                                </v-flex>
+                            <v-flex xs4 >
+                                <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details></v-text-field>
+                            </v-flex>
                         </template>
                         <v-card>
                             <v-card-title>
@@ -63,9 +69,15 @@
                                         <v-col cols="12" sm="6" md="12">
                                             <v-text-field v-model="form.telepon" label="Telepon"></v-text-field>
                                         </v-col>
-                                        <!-- <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="form.password" label="password"></v-text-field>
-                                        </v-col> -->
+                                        <v-col v-if="this.typeInput === 'Ubah'" cols="12" sm="6" md="12">
+                                        <label>Ubah password? </label>
+                                            <input type="checkbox" id="checkbox" v-model="checked"><br><br>
+                                                <v-text-field v-if="checked" v-model="form.password" type="password" label="Password Baru"></v-text-field>
+                                                <v-text-field v-else v-show="false" v-model="form.password" type="password" label="Password"></v-text-field>
+                                        </v-col>
+                                        <v-col v-else cols="12" sm="6" md="12">
+                                            <v-text-field v-model="form.password" label="password" type="password"></v-text-field>
+                                        </v-col>
                                     </v-row>
                                 </v-container>
                             </v-card-text>
@@ -128,6 +140,7 @@
                 dialog: false,
                 color: '',
                 snackbar: false,
+                checked: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [{
@@ -182,7 +195,7 @@
                 ],
                 role_data: [
                     { text: 'CS' },
-                    { text: 'Kasir' }
+                    { text: 'KASIR' }
                 ],
                 pegawai: [],
                 form: {
@@ -207,8 +220,12 @@
                 return this.typeInput
             },
             computedDateFormatted () {
-                this.form.tanggal_lahir = this.formatDate(this.date)
-                return this.form.tanggal_lahir
+                if(this.typeInput === 'Tambah'){
+                    this.form.tanggal_lahir = this.formatDate(this.date)
+                    return this.form.tanggal_lahir
+                }else{
+                    return this.form.tanggal_lahir
+                }
             },
         },
         watch: {
@@ -283,7 +300,8 @@
                 this.user.append('tanggal_lahir', this.form.tanggal_lahir);
                 this.user.append('telepon', this.form.telepon);
                 this.user.append('role', this.form.role);
-                this.user.append('password', this.form.password);
+                if (this.checked)
+                    this.user.append('password', this.form.password);
 
                 var uri = this.$apiUrl + '/pegawai/' + this.updatedId;
                 this.load = true
@@ -338,7 +356,7 @@
                 if (!date) return null
 
                 const [year, month, day] = date.split('-')
-                return `${month}/${day}/${year}`
+                return `${year}/${month}/${day}`
             },
             parseDate (date) {
                 if (!date) return null
