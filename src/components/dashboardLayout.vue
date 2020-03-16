@@ -77,6 +77,11 @@ export default {
                     icon: 'mdi-human' 
                 }, 
                 { 
+                    title: 'Produk', 
+                    path: '/produk', 
+                    icon: 'mdi-file' 
+                }, 
+                { 
                     title: 'Ukuran Hewan', 
                     path: '/ukuran-hewan', 
                     icon: 'mdi-ruler' 

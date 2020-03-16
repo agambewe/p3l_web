@@ -34,7 +34,7 @@
                         </v-card>
                     </v-dialog>
                 </v-layout>
-                <v-data-table :headers="headers" :items="ukuranHewan" :search="keyword" :loading="load">
+                <v-data-table :headers="headers" :items-per-page="5" :items="ukuranHewan" :search="keyword" :loading="load">
                     <template v-slot:body="{ items }">
                         <tbody>
                             <tr v-for="(item,index) in items" :key="item.id">

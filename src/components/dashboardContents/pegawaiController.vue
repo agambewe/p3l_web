@@ -64,7 +64,7 @@
                                             </v-menu>
                                         </v-col>
                                         <v-col cols="12" sm="12" md="12">
-                                            <v-text-field v-model="form.alamat" label="Alamat"></v-text-field>
+                                            <v-textarea v-model="form.alamat" label="Alamat"></v-textarea>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="12">
                                             <v-text-field v-model="form.telepon" label="Telepon"></v-text-field>
@@ -89,7 +89,7 @@
                         </v-card>
                     </v-dialog>
                 </v-layout>
-                <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load">
+                <v-data-table :headers="headers" :items-per-page="5" :items="pegawai" :search="keyword" :loading="load">
                     <template v-slot:body="{ items }">
                         <tbody>
                             <tr v-for="(item,index) in items" :key="item.id">
