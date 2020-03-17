@@ -20,9 +20,18 @@
                             <v-card-text>
                                 <v-container>
                                     <v-row>
-                                        <img v-if="imageUrl" :src="imageUrl" alt="Profile foto" width="150" height="180">
-                                        <img v-else :src="$apiUrl + '/../uploads/' + form.foto" alt="Foto produk" width="150" height="180"><br>
-                                        <input type="file" accept="image/*" @change="onChange" />
+                                        <v-col v-if="this.typeInput === 'Ubah'" cols="12" sm="12" md="12">
+                                            <img v-if="imageUrl" :src="imageUrl" alt="Foto produk" width="150" height="150">
+                                            <img v-else :src="$apiUrl + '/../uploads/' + form.foto" alt="Foto produk" width="150" height="150"><br>
+                                            <label>Ubah gambar? </label>
+                                            <input type="checkbox" id="checkbox_img" v-model="checked_img"><br>
+                                            <input v-if="checked_img" type="file" accept="image/*" @change="onChange" />
+                                        </v-col>
+                                        <v-col v-else cols="12" sm="12" md="12">
+                                            <img v-if="imageUrl" :src="imageUrl" alt="Foto produk" width="150" height="150">
+                                            <img v-else :src="$apiUrl + '/../uploads/default.png'" alt="Foto produk" width="150" height="150"><br>
+                                            <input type="file" accept="image/*" @change="onChange" />
+                                        </v-col>
                                         <v-col cols="12" sm="12" md="12">
                                             <v-text-field v-model="form.nama" label="Nama"></v-text-field>
                                         </v-col>
@@ -63,6 +72,7 @@
                                 <td>{{ item.nama }}</td>
                                 <td>{{ item.satuan }}</td>
                                 <td>{{ item.stok }}</td>
+                                <td>{{ item.minimal }}</td>
                                 <td>{{ item.harga }}</td>
                                 <td>{{ item.created_at}}</td>
                                 <td>{{ item.updated_at }}</td>
@@ -104,6 +114,7 @@
                 dialog: false,
                 color: '',
                 text: '',
+                checked_img: false,
                 snackbar: false,
                 checked: false,
                 typeInput: 'Tambah',
@@ -113,8 +124,8 @@
                         value: 'no',
                     },
                     {
-                        text: 'Foto',
-                        value: 'foto'
+                        text: 'Gambar',
+                        value: 'gambar'
                     },
                     {
                         text: 'Nama',
@@ -127,6 +138,10 @@
                     {
                         text: 'Stok',
                         value: 'stok'
+                    },
+                    {
+                        text: 'Minimal',
+                        value: 'minimal'
                     },
                     {
                         text: 'Harga',
@@ -178,8 +193,7 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
-                this.cek = -1
+                this.resetForm();
             },
             imageSrc(foto) {
                 return this.$apiUrl + '/../uploads/' + foto
@@ -187,7 +201,6 @@
             onChange(e) {
                 const file = e.target.files[0]
                 this.produk.foto = file
-                this.form.foto = file
                 this.imageUrl = URL.createObjectURL(file)
             },
             readData() {
@@ -202,7 +215,7 @@
                 this.user.append('stok', this.form.stok);
                 this.user.append('minimal', this.form.minimal);
                 this.user.append('harga', this.form.harga);
-                this.user.append('foto', this.form.foto);
+                this.user.append('foto', this.produk.foto);
 
                 var uri = this.$apiUrl + '/produk/'
                 this.load = true
@@ -223,21 +236,25 @@
                 })
             },
             editHandler(item) {
-                console.log(this.typeInput);
                 this.typeInput = 'Ubah';
                 this.dialog = true;
                 this.form.nama = item.nama;
                 this.form.satuan = item.satuan;
                 this.form.stok = item.stok;
+                this.form.minimal = item.minimal;
                 this.form.harga = item.harga;
+                this.form.foto = item.foto;
                 this.updatedId = item.id;
-                console.log(this.typeInput);
             },
             updateData() {
                 this.user.append('nama', this.form.nama);
                 this.user.append('satuan', this.form.satuan);
                 this.user.append('stok', this.form.stok);
+                this.user.append('minimal', this.form.minimal);
                 this.user.append('harga', this.form.harga);
+                if (this.checked_img){
+                    this.user.append('foto', this.produk.foto);
+                }
 
                 var uri = this.$apiUrl + '/produk/' + this.updatedId;
                 this.load = true
@@ -284,17 +301,26 @@
                 }
             },
             resetForm() {
+                // this.imageUrl= '',
                 this.form = {
                     nama: '',
                     satuan: '',
                     stok: '',
+                    minimal: '',
                     harga: '',
                     foto: '',
-                }
+                },
+
+                this.produk.foto = '';
+                this.checked_img = false;
+                this.imageUrl = '';
             },
         },
         mounted() {
             this.readData();
+            this.produk.foto = '';
+            this.checked_img = false;
+            this.imageUrl = '';
         },
     }
 </script>
