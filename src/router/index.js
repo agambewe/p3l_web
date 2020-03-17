@@ -24,6 +24,7 @@ const routes = [
             { name: 'PegawaiController', path: '/pegawai', component: loadView('pegawaiController') },
             { name: 'PegawaiTerhapus', path: '/pegawai/terhapus', component: loadSampah('pegawaiController') },
             { name: 'ProdukController', path: '/produk', component: loadView('produkController') },
+            { name: 'LayananController', path: '/layanan', component: loadView('layananController') },
             { name: 'UkuranHewanController', path: '/ukuran-hewan', component: loadView('ukuranHewanController') },
             { name: 'JenisHewanController', path: '/jenis-hewan', component: loadView('jenisHewanController') },
         ],

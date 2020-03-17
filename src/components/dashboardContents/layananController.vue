@@ -2,16 +2,16 @@
     <v-container dark>
         <v-card>
             <v-container grid-list-md mb-0>
-                <h2 class="text-md-center">Ukuran Hewan</h2>
+                <h2 class="text-md-center" style="text-shadow: 2px 0px 4px #00000">Data Layanan</h2>
                 <v-layout row wrap style="margin:10px">
                     <v-flex xs6 class="text-right">
                         <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details>
                         </v-text-field>
                     </v-flex>
                     <v-divider class="mx-4" inset vertical></v-divider>
-                    <v-dialog v-model="dialog" max-width="300px">
+                    <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on }">
-                            <v-btn color="secondary" dark class="mb-2" v-on="on" @click="clear()">tambah ukuran</v-btn>
+                            <v-btn color="secondary" dark class="mb-2" v-on="on" @click="clear()">tambah layanan</v-btn>
                         </template>
                         <v-card>
                             <v-card-title>
@@ -21,7 +21,20 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12" sm="12" md="12">
-                                            <v-text-field v-model="form.nama" label="Nama Ukuran"></v-text-field>
+                                            <v-text-field v-model="form.nama" label="Nama Layanan"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="6" sm="6" md="6">
+                                            <v-overflow-btn 
+                                            v-model="form.id_ukuran" 
+                                            label="Ukuran"
+                                            class="my-2" 
+                                            :items="ukuranHewan"
+                                            item-value="id"
+                                            item-text="nama">
+                                            </v-overflow-btn>
+                                        </v-col>
+                                        <v-col cols="6" sm="6" md="6">
+                                            <v-text-field v-model="form.harga" type="number" label="Harga"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -34,12 +47,22 @@
                         </v-card>
                     </v-dialog>
                 </v-layout>
-                <v-data-table :headers="headers" :items-per-page="5" :items="ukuranHewan" :search="keyword" :loading="load">
+                <v-data-table :headers="headers" :items-per-page="5" :items="layanan" :search="keyword" :loading="load">
                     <template v-slot:body="{ items }">
                         <tbody>
                             <tr v-for="(item,index) in items" :key="item.id">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ item.nama }}</td>
+                                <td>
+                                <v-select
+                                    v-model="item.id_ukuran" 
+                                    label="Ukuran"
+                                    readonly
+                                    :items="ukuranHewan"
+                                    item-value="id"
+                                    item-text="nama">
+                                </v-select></td>
+                                <td>{{ item.harga }}</td>
                                 <td>{{ item.created_at}}</td>
                                 <td>{{ item.updated_at }}</td>
                                 <td>
@@ -84,6 +107,14 @@
                         value: 'nama'
                     },
                     {
+                        text: 'Ukuran',
+                        value: 'id_ukuran'
+                    },
+                    {
+                        text: 'Harga',
+                        value: 'harga'
+                    },
+                    {
                         text: 'Created At',
                         value: 'created_at'
                     },
@@ -97,13 +128,16 @@
                         sortable: false
                     },
                 ],
+                layanan: [],
                 ukuranHewan: [],
                 form: {
+                    id_ukuran: '',
                     nama: '',
+                    harga: ''
                 },
                 updatedId: '',
                 errors: '',
-                ukuran: new FormData,
+                user: new FormData,
             }
         },
         computed: {
@@ -117,26 +151,28 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
-                this.cek = -1
+                this.resetForm();
             },
-            readData() {
-                var set_token = {
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
-                }
+            readDataUkuranHewan() {
                 var uri = this.$apiUrl + '/ukuran-hewan/'
-                this.$http.get(uri, set_token).then(response => {
+                this.$http.get(uri).then(response => {
                     this.ukuranHewan = response.data
                 })
             },
+            readData() {
+                var uri = this.$apiUrl + '/layanan/'
+                this.$http.get(uri).then(response => {
+                    this.layanan = response.data
+                })
+            },
             createData() {
-                this.ukuran.append('nama', this.form.nama);
+                this.user.append('id_ukuran', this.form.id_ukuran);
+                this.user.append('nama', this.form.nama);
+                this.user.append('harga', this.form.harga);
 
-                var uri = this.$apiUrl + '/ukuran-hewan/'
+                var uri = this.$apiUrl + '/layanan/'
                 this.load = true
-                this.$http.post(uri, this.ukuran).then(response => {
+                this.$http.post(uri, this.user).then(response => {
                     this.snackbar = true;
                     this.color = 'green';
                     this.text = response.data.message;
@@ -153,25 +189,27 @@
                 })
             },
             editHandler(item) {
-                console.log(this.typeInput);
                 this.typeInput = 'Ubah';
                 this.dialog = true;
+                this.form.id_ukuran = item.id_ukuran;
                 this.form.nama = item.nama;
+                this.form.harga = item.harga;
                 this.updatedId = item.id;
-                console.log(this.typeInput);
             },
             updateData() {
-                this.ukuran.append('nama', this.form.nama);
+                this.user.append('id_ukuran', this.form.id_ukuran);
+                this.user.append('nama', this.form.nama);
+                this.user.append('harga', this.form.harga);
 
-                var uri = this.$apiUrl + '/ukuran-hewan/' + this.updatedId;
+                var uri = this.$apiUrl + '/layanan/' + this.updatedId;
                 this.load = true
-                this.$http.post(uri, this.ukuran).then(response => {
+                this.$http.post(uri, this.user).then(response => {
                     this.snackbar = true;
                     this.color = 'green';
                     this.text = response.data.message;
                     this.load = false;
                     this.close();
-                    this.readData(); //mengambil data user 
+                    this.readData();
                     this.resetForm();
                     this.typeInput = 'Tambah';
                 }).catch(error => {
@@ -185,7 +223,7 @@
             },
             deleteData(deleteId) {
                 //mengahapus data 
-                var uri = this.$apiUrl + '/ukuran-hewan/' + deleteId;
+                var uri = this.$apiUrl + '/layanan/' + deleteId;
                 //data dihapus berdasarkan id 
                 confirm('Yakin menghapus ini?') && this.$http.delete(uri).then(response => {
                     this.snackbar = true;
@@ -209,12 +247,15 @@
             },
             resetForm() {
                 this.form = {
+                    id_ukuran: '',
                     nama: '',
+                    harga: ''
                 }
             },
         },
         mounted() {
             this.readData();
+            this.readDataUkuranHewan();
         },
     }
 </script>

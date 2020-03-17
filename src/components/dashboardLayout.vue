@@ -82,6 +82,11 @@ export default {
                     icon: 'mdi-file' 
                 }, 
                 { 
+                    title: 'Layanan', 
+                    path: '/layanan', 
+                    icon: 'mdi-store' 
+                }, 
+                { 
                     title: 'Ukuran Hewan', 
                     path: '/ukuran-hewan', 
                     icon: 'mdi-ruler' 

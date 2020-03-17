@@ -42,12 +42,6 @@
                                 <td>{{ item.nama }}</td>
                                 <td>{{ item.created_at}}</td>
                                 <td>{{ item.updated_at }}</td>
-                                <td v-if="item.deleted_at==NULL">
-                                    -
-                                </td>
-                                <td v-else>
-                                    {{ item.deleted_at }}
-                                </td>
                                 <td>
                                     <v-btn icon color="primary lighten-2" dark @click="editHandler(item)">
                                         <v-icon>mdi-file-edit</v-icon>
@@ -96,10 +90,6 @@
                     {
                         text: 'Updated At',
                         value: 'updated_at'
-                    },
-                    {
-                        text: 'Deleted At',
-                        value: 'deleted_at'
                     },
                     {
                         text: 'Aksi',
