@@ -1,69 +1,89 @@
 <template>
     <v-container dark>
-        <v-card>
-            <v-container grid-list-md mb-0>
-                <h2 class="text-md-center">Jenis Hewan</h2>
-                <v-layout row wrap style="margin:10px">
-                    <v-flex xs6 class="text-right">
-                        <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details>
-                        </v-text-field>
-                    </v-flex>
-                    <v-divider class="mx-4" inset vertical></v-divider>
-                    <v-dialog v-model="dialog" max-width="300px">
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="secondary" dark class="mb-2" v-on="on" @click="clear()">tambah jenis</v-btn>
-                        </template>
-                        <v-card>
-                            <v-card-title>
-                                <span class="headline">{{ formTitle }}</span>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-container>
-                                    <v-row>
-                                        <v-col cols="12" sm="12" md="12">
-                                            <v-text-field v-model="form.nama" label="Nama Jenis"></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" text @click="close">Batal</v-btn>
-                                <v-btn color="blue darken-1" text @click="setForm()">Simpan</v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-                </v-layout>
-                <v-data-table :headers="headers" :items-per-page="5" :items="jenisHewan" :search="keyword" :loading="load">
-                    <template v-slot:body="{ items }">
-                        <tbody>
-                            <tr v-for="(item,index) in items" :key="item.id">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ item.nama }}</td>
-                                <td>{{ item.created_at}}</td>
-                                <td>{{ item.updated_at }}</td>
-                                <td>
-                                    <v-btn icon color="primary lighten-2" dark @click="editHandler(item)">
-                                        <v-icon>mdi-file-edit</v-icon>
-                                    </v-btn>
-                                    <v-btn icon color="red lighten-2 " @click="deleteData(item.id)">
-                                        <v-icon>mdi-delete</v-icon>
-                                    </v-btn>
-                                </td>
-                            </tr>
-                        </tbody>
+        <v-container grid-list-md mb-0>
+            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Jenis Hewan</h1>
+            <v-layout row wrap style="margin:10px">
+                <v-dialog v-model="dialog" persistent max-width="300px">
+                    <template v-slot:activator="{ on }">
+                        <v-flex class="flex" xs8 style="float:right;widht:300">
+                            <v-btn class="mx-2" fab color="indigo accent-2" v-on="on" @click="clear()">
+                                <v-icon dark>mdi-plus</v-icon>
+                            </v-btn>
+                        </v-flex>
+                        <v-divider class="mx-1" inset vertical></v-divider>
+                        <v-flex xs4 >
+                            <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+                        </v-flex>
                     </template>
-                </v-data-table>
-                <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-                    {{ text }}
-                    <v-btn dark text @click="snackbar = false">
-                        Close
-                    </v-btn>
-                </v-snackbar>
-            </v-container>
-        </v-card>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">{{ formTitle }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <v-row>
+                                    <v-col cols="12" sm="12" md="12">
+                                        <v-text-field v-model="form.nama" label="Nama Jenis"></v-text-field>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
+                            <v-btn color="green lighten-1" text @click="setForm()">Simpan</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+            </v-layout>
+            <v-data-table :headers="headers" :items-per-page="5" :items="jenisHewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+                <template v-slot:body="{ items }">
+                    <tbody>
+                        <tr v-for="item in items" :key="item.id">
+                            <td >
+                                <div class="flex">
+                                    <v-btn icon color="amber accent-3" @click="editHandler(item)">
+                                        <v-icon>mdi-pencil</v-icon>
+                                    </v-btn>
+                                    <v-btn icon color="red accent-2" @click="deleteData(item.id)">
+                                        <v-icon>mdi-delete-empty</v-icon>
+                                    </v-btn>
+                                </div>
+                            </td>
+                            <td>{{ item.nama }}</td>
+                            <td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td>
+                        </tr>
+                    </tbody>
+                </template>
+            </v-data-table>
+            <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
+                {{ text }}
+                <v-btn dark text @click="snackbar = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
+        </v-container>
     </v-container>
 </template>
+
+<style scoped>
+    @import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
+
+    table th + th { border-left:1px solid #dddddd; }
+    table td + td { border-left:1px solid #dddddd; }
+    tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, .05);
+    }
+
+    .flex {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+    }
+</style>
 
 <script>
     export default {
@@ -75,9 +95,11 @@
                 snackbar: false,
                 typeInput: 'Tambah',
                 keyword: '',
-                headers: [{
-                        text: 'No',
-                        value: 'no',
+                headers: [
+                    {
+                        text: 'Aksi',
+                        value: null,
+                        sortable: false
                     },
                     {
                         text: 'Nama',
@@ -90,11 +112,6 @@
                     {
                         text: 'Updated At',
                         value: 'updated_at'
-                    },
-                    {
-                        text: 'Aksi',
-                        value: null,
-                        sortable: false
                     },
                 ],
                 jenisHewan: [],

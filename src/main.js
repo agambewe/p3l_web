@@ -18,3 +18,10 @@ new Vue({
   vuetify, 
   components: { App } 
 }).$mount('#app')
+
+export default function (Vue, { head }) {
+  head.link.push({
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css?family=Iceland'
+  })
+}

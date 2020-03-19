@@ -1,45 +1,53 @@
 <template>
     <v-container dark>
-        <v-card>
-            <v-container grid-list-md mb-0>
-                <h2 class="text-md-center" style="text-shadow: 2px 0px 4px #00000">Data Pegawai Terhapus</h2>
-                <v-layout row wrap style="margin:10px">
-                    <v-flex xs8 style="float:right;widht:300">
-                        <v-btn color="secondary" dark class="mb-1" v-on="on" router to="/pegawai/">Data pegawai</v-btn>
-                        <v-divider class="mx-1" inset vertical></v-divider>
-                    </v-flex>
-                    <v-flex xs4 >
-                        <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details></v-text-field>
-                    </v-flex>
-                </v-layout>
-                <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load">
-                    <template v-slot:body="{ items }">
-                        <tbody>
-                            <tr v-for="(item,index) in items" :key="item.id">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ item.nama }}</td>
-                                <td>{{ item.username }}</td>
-                                <td>{{ item.alamat }}</td>
-                                <td>{{ item.tanggal_lahir }}</td>
-                                <td>{{ item.telepon }}</td>
-                                <td>{{ item.role }}</td>
-                                <!-- <td>{{ item.password }}</td> -->
-                                <td>{{ item.created_at}}</td>
-                                <td>{{ item.updated_at }}</td>
-                                <td v-if="item.deleted_at==NULL">
-                                    -
-                                </td>
-                                <td v-else>
-                                    {{ item.deleted_at }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </template>
-                </v-data-table>
-            </v-container>
-        </v-card>
+        <v-container grid-list-md mb-0>
+            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Data Pegawai Terhapus</h1>
+            <v-layout row wrap style="margin:10px">
+                <v-flex xs8 style="float:right;widht:300">
+                    <v-btn small class="mx-2" fab color="deep-orange darken-3" v-on="on" router to="/pegawai">
+                        <v-icon dark>mdi-undo</v-icon>
+                    </v-btn>
+                </v-flex>
+                <v-flex xs4 >
+                    <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details></v-text-field>
+                </v-flex>
+            </v-layout>
+            <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load">
+                <template v-slot:body="{ items }">
+                    <tbody>
+                        <tr v-for="item in items" :key="item.id">
+                            <td>{{ item.nama }}</td>
+                            <td>{{ item.username }}</td>
+                            <td>{{ item.alamat }}</td>
+                            <td>{{ item.tanggal_lahir }}</td>
+                            <td>{{ item.telepon }}</td>
+                            <td>{{ item.role }}</td>
+                            <!-- <td>{{ item.password }}</td> -->
+                            <td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td>
+                            <td v-if="item.deleted_at==NULL">
+                                -
+                            </td>
+                            <td v-else>
+                                {{ item.deleted_at }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </template>
+            </v-data-table>
+        </v-container>
     </v-container>
 </template>
+
+<style scoped>
+@import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
+
+table th + th { border-left:1px solid #dddddd; }
+table td + td { border-left:1px solid #dddddd; }
+tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, .05);
+}
+</style>
 
 <script>
     export default {
@@ -48,10 +56,7 @@
                 load: false,
                 color: '',
                 keyword: '',
-                headers: [{
-                        text: 'No',
-                        value: 'no',
-                    },
+                headers: [
                     {
                         text: 'Nama',
                         value: 'nama'
