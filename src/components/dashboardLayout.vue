@@ -130,7 +130,7 @@ export default {
     },
     computed: {
     bg () {
-    return 'https://www.htmlcsscolor.com/preview/gallery/34495D.png'
+    return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
     },
 },
 } 

@@ -6,7 +6,7 @@
             <v-dialog v-model="dialog" persistent max-width="500px">
                 <template v-slot:activator="{ on }">
                     <v-flex class="flex" xs8 style="float:right;widht:300">
-                        <v-btn class="mx-2" fab color="indigo accent-2" v-on="on" @click="clear()">
+                        <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear()">
                             <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                     </v-flex>
