@@ -51,7 +51,7 @@
         <v-app-bar dark app fixed height="75px" :src="bg"> 
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> 
             <img src="../assets/logo.png" style="height:45px;width:45px"> 
-            <v-toolbar-title style="font-size: 21px;" class="white--text" > Couvee Pet Shop </v-toolbar-title>
+            <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Couvee Pet Shop </v-toolbar-title>
             <VSpacer /> 
             <v-toolbar-tems>
                 <v-btn text router to="/user/profile"><v-icon>mdi-face</v-icon></v-btn>
@@ -63,6 +63,10 @@
         </VContent> 
     </div> 
 </template> 
+
+<style scoped>
+    @import url("https://fonts.googleapis.com/css?family=Jolly%20Lodger");
+</style>
 
 <script> 
 export default { 
