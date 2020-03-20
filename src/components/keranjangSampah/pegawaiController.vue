@@ -9,7 +9,7 @@
                     </v-btn>
                 </v-flex>
                 <v-flex xs4 >
-                    <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details></v-text-field>
+                    <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
                 </v-flex>
             </v-layout>
             <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load">

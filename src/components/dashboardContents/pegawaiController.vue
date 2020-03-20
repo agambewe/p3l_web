@@ -19,7 +19,7 @@
                         </v-flex>
                         <v-divider class="mx-1" inset vertical></v-divider>
                         <v-flex xs4 >
-                            <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+                            <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
                         </v-flex>
                     </template>
                     <v-card>
@@ -129,7 +129,7 @@
     </v-container>
 </template>
 
-<style scoped>
+<style>
     @import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
 
     table th + th { border-left:1px solid #dddddd; }
@@ -138,6 +138,10 @@
         background-color: rgba(0, 0, 0, .05);
     }
 
+    .v-select__selections {
+        max-width: 100px;
+        border: none;
+    }
     .flex {
         display: -webkit-box;
         display: -moz-box;
@@ -273,18 +277,25 @@
                 var uri = this.$apiUrl + '/pegawai/'
                 this.load = true
                 this.$http.post(uri, this.user).then(response => {
-                    this.snackbar = true;
-                    this.color = 'green';
-                    this.text = response.data.message;
+                    this.$swal({
+                        icon: 'success',
+                        title: response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.load = false;
                     this.close();
                     this.readData(); //mengambil data user 
                     this.resetForm();
                 }).catch(error => {
                     this.errors = error
-                    this.snackbar = true;
-                    this.text = 'Try Again';
-                    this.color = 'red';
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Gagal mengubah data!',
+                        text: 'Coba lagi ..',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.load = false;
                 })
             },
@@ -314,38 +325,62 @@
                 var uri = this.$apiUrl + '/pegawai/' + this.updatedId;
                 this.load = true
                 this.$http.post(uri, this.user).then(response => {
-                    this.snackbar = true;
-                    this.color = 'green';
-                    this.text = response.data.message;
+                    this.$swal({
+                        icon: 'success',
+                        title: response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.load = false;
                     this.close();
-                    this.readData(); //mengambil data user 
+                    this.readData(); //refresh data ini 
                     this.resetForm();
                     this.typeInput = 'Tambah';
                 }).catch(error => {
                     this.errors = error
-                    this.snackbar = true;
-                    this.text = 'Try Again';
-                    this.color = 'red';
+                    this.$swal({
+                        icon: 'error',
+                        title: 'Gagal mengubah data!',
+                        text: 'Coba lagi ..',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                     this.load = false;
-                    this.typeInput = 'Tambah';
                 })
             },
             deleteData(deleteId) {
                 //mengahapus data 
                 var uri = this.$apiUrl + '/pegawai/' + deleteId;
                 //data dihapus berdasarkan id 
-                confirm('Yakin menghapus ini?') && this.$http.delete(uri).then(response => {
-                    this.snackbar = true;
-                    this.color = 'green';
-                    this.text = response.data.message;
-                    this.deleteDialog = false;
-                    this.readData();
-                }).catch(error => {
-                    this.errors = error
-                    this.snackbar = true;
-                    this.text = 'Try Again';
-                    this.color = 'red';
+                this.$swal({
+                    title: 'Apa kamu yakin??',
+                    text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
+                    icon: 'warning',
+                    cancelButtonColor: '#FF5252',
+                    confirmButtonColor: '#BDBDBD',
+                    cancelButtonText: 'Oke!',
+                    confirmButtonText: 'Batal',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    // reverseButtons: true,
+                    allowOutsideClick: false,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (!result.value) {
+                        this.$http.delete(uri).then(response => {
+                            this.$swal({
+                            title: response.data.message,
+                            icon: 'success'})
+                            this.readData();
+                        }).catch(error => {
+                        this.errors = error
+                        this.$swal({
+                            title: 'Gagal menghapus data!',
+                            text: 'Coba lagi ..',
+                            icon: 'error',
+                            });
+                        })
+                    }
                 })
             },
             setForm() {
