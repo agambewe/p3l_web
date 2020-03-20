@@ -4,10 +4,11 @@
         v-model="drawer"
         :expand-on-hover="expandOnHover"
         :mini-variant="miniVariant"
-        :src="bg"
+        color="#4E5862"
         absolute
         dark
         >
+        <!-- :src="bg" -->
             <v-list-item> 
                 <v-list-item-content> 
                     <v-list-item-title class="title"> Couvee </v-list-item-title> 
@@ -41,14 +42,10 @@
                         </v-list-item-content> 
                     </v-list-item> 
                 </v-list-group>
-            </v-list> 
-            <!-- <template v-slot:append> 
-                <div class="pa-2">
-                    <v-btn block @click="submitLogout()"><v-icon>mdi-logout</v-icon></v-btn>
-                </div>
-            </template>  -->
+            </v-list>
         </v-navigation-drawer> 
-        <v-app-bar dark app fixed height="75px" :src="bg"> 
+        <v-app-bar dark app fixed height="75px" color="#4E5862"> 
+            <!-- :src="bg" -->
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> 
             <img src="../assets/logo.png" style="height:45px;width:45px"> 
             <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Couvee Pet Shop </v-toolbar-title>
@@ -129,9 +126,9 @@ export default {
         },
     },
     computed: {
-    bg () {
-    return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
-    },
+    // bg () {
+    //     return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
+    // },
 },
 } 
 </script>

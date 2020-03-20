@@ -51,7 +51,7 @@
             </v-layout>
             <v-data-table :headers="headers" :items-per-page="5" :items="layanan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
-                    <tbody>
+                    <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td >
                                 <div class="flex">
@@ -77,6 +77,9 @@
                             <td>{{ item.created_at}}</td>
                             <td>{{ item.updated_at }}</td>
                         </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <td :colspan="headers.length" class="text-center">Data masih kosong.</td>
                     </tbody>
                 </template>
             </v-data-table>

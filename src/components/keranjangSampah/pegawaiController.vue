@@ -12,9 +12,9 @@
                     <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
                 </v-flex>
             </v-layout>
-            <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load">
+            <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
-                    <tbody>
+                    <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td>{{ item.nama }}</td>
                             <td>{{ item.username }}</td>
@@ -32,6 +32,9 @@
                                 {{ item.deleted_at }}
                             </td>
                         </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <td :colspan="headers.length" class="text-center">Data masih kosong.</td>
                     </tbody>
                 </template>
             </v-data-table>

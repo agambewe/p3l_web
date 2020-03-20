@@ -1,40 +1,38 @@
 <template>
-<v-container>
-    <v-layout row class="text-xs-center"> 
-        <v-card height="500px"></v-card>
-        <v-flex xs4 class="grey lighten-4">
-            <v-container style="position: relative;top: 15%;" class="text-xs-center">
-                <v-card flat>
-                    <v-card-title primary-title>
-                        <h4>Login</h4>
-                    </v-card-title>
-                    <ValidationObserver ref="observer" v-slot="{ validate, reset }">
-                        <v-form class="my-2">
-                            <ValidationProvider v-slot="{ errors }" name="username" rules="required|max:10">
-                                <v-text-field v-model="username" prepend-icon="mdi-human" :counter="10" :error-messages="errors" label="Username" required></v-text-field>
-                            </ValidationProvider>
-                            <ValidationProvider v-slot="{ errors }" name="password" rules="required|">
-                                <v-text-field v-model="password" type="password" prepend-icon="mdi-key" :error-messages="errors" label="password" required @keyup.enter="submit(); load =true"></v-text-field>
-                            </ValidationProvider>
-                            <v-card-actions>
-                                <v-btn primary block @click="submit">Login</v-btn>
-                            </v-card-actions>
-                            <v-card-actions>
-                            <v-btn primary block @click="clear">clear</v-btn>
-                            </v-card-actions>
-                        </v-form>
-                    </ValidationObserver>
-                    <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-                    {{ text }}
-                    <v-btn dark text @click="snackbar = false">
-                        Close
-                    </v-btn>
-                    </v-snackbar>
-                </v-card>
-            </v-container>
-        </v-flex>
-    </v-layout>
-</v-container>
+<div class="grey lighten-1">
+    <v-container>
+        <v-layout row class="text-xs-center"> 
+            <v-row>
+                <v-card height="500px"></v-card>
+                <v-flex md4 align="center" justify="center" style="backgroundColor:#4E5862;">
+                    <v-container style="position: relative;top: 15%;left: 0; right:0" class="text-xs-center">
+                        <v-card class="pl-4 pr-4 pb-1" flat>
+                            <v-card-title primary-title>
+                                <h4>Login</h4>
+                            </v-card-title>
+                            <ValidationObserver ref="observer" v-slot="{ validate, reset }">
+                                <v-form class="my-5">
+                                    <ValidationProvider v-slot="{ errors }" name="username" rules="required|max:50">
+                                        <v-text-field v-model="username" prepend-icon="mdi-human" :counter="50" :error-messages="errors" label="Username" required></v-text-field>
+                                    </ValidationProvider>
+                                    <ValidationProvider v-slot="{ errors }" name="password" rules="required|">
+                                        <v-text-field v-model="password" type="password" prepend-icon="mdi-key" :error-messages="errors" label="password" required @keyup.enter="submit(); load =true"></v-text-field>
+                                    </ValidationProvider>
+                                    <v-card-actions>
+                                        <v-btn primary block @click="submit">Login</v-btn>
+                                    </v-card-actions>
+                                    <v-card-actions>
+                                    <v-btn primary block @click="clear">clear</v-btn>
+                                    </v-card-actions>
+                                </v-form>
+                            </ValidationObserver>
+                        </v-card>
+                    </v-container>
+                </v-flex>
+            </v-row>
+        </v-layout>
+    </v-container>
+</div>
 </template>
 
 <script>
@@ -71,8 +69,6 @@ export default {
         username: '',
         password: '',
         load: false,
-        color: '',
-        snackbar: false,
     }),
 
     methods: {
@@ -86,16 +82,21 @@ export default {
                         password: this.password
                     }).then(response => {
                         if(response.data.status==='failed'){
-                            this.snackbar = true;
-                            this.color = 'red';
-                            this.text = response.data.message;
+                            this.$swal({
+                                icon: 'error',
+                                title: response.data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                             this.load = false;
                         }else{
                             localStorage.setItem('username', response.data.user)
-                            console.log(response.data)
-                            this.snackbar = true;
-                            this.color = 'green';
-                            this.text = response.data.message;
+                            this.$swal({
+                                icon: 'success',
+                                title: response.data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
                             this.load = false;
                             this.clear();
                             this.$router.push({
@@ -109,10 +110,8 @@ export default {
                 }
         },
         clear() {
-            this.name = ''
-            this.email = ''
-            this.select = null
-            this.checkbox = null
+            this.username = ''
+            this.password = ''
             this.$refs.observer.reset()
         },
     },
