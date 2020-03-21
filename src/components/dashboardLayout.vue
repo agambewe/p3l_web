@@ -31,13 +31,13 @@
                 </template>
                 
                     <v-list-item 
-                        v-for="item in sub.items" 
+                        v-for="item in sub.items"
                         :key="item.title" link 
                         @click="item.path"
                     >
                         <v-list-item-content> 
                             <router-link :to="item.path" tag="ul" exact>
-                            <v-list-item-title v-text="item.title"></v-list-item-title>
+                                <v-list-item-title v-text="item.title"></v-list-item-title>
                             </router-link>
                         </v-list-item-content> 
                     </v-list-item> 
@@ -50,10 +50,10 @@
             <img src="../assets/logo.png" style="height:45px;width:45px"> 
             <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Couvee Pet Shop </v-toolbar-title>
             <VSpacer /> 
-            <v-toolbar-tems>
+            <v-toolbar-items>
                 <v-btn text router to="/user/profile"><v-icon>mdi-face</v-icon></v-btn>
                 <v-btn text router @click="submitLogout()"><v-icon>mdi-power</v-icon></v-btn>
-            </v-toolbar-tems>
+            </v-toolbar-items>
         </v-app-bar> 
         <VContent > 
             <router-view /> 
@@ -66,74 +66,57 @@
 </style>
 
 <script> 
+import { mapGetters } from 'vuex'
 export default { 
     data () { 
         return { 
             drawer: true,
             expandOnHover: true,
             miniVariant: true,
-            // load: false,
-            // logwhat: '',
-            items: [ 
-                { 
-                    title: 'Dashboard', 
-                    path: '/', 
-                    icon: 'mdi-home' 
-                },
-                { 
-                    title: 'User', 
-                    path: '/user', 
-                    icon: 'mdi-human-male' 
-                },  
-                {
-            icon: 'mdi-database',
-            title: 'Data Master',
-            active: true,
-            items: [
-                { 
-                    title: 'Pegawai', 
-                    path: '/pegawai',
-                }, 
-                { 
-                    title: 'Customer', 
-                    path: '/customer',
-                }, 
-                { 
-                    title: 'Hewan', 
-                    path: '/hewan',
-                }, 
-                { 
-                    title: 'Produk', 
-                    path: '/produk',
-                }, 
-                { 
-                    title: 'Layanan', 
-                    path: '/layanan',
-                }, 
-                { 
-                    title: 'Ukuran Hewan', 
-                    path: '/ukuran-hewan', 
-                }, 
-                { 
-                    title: 'Jenis Hewan', 
-                    path: '/jenis-hewan',
-                }, 
-                ],
-            },
-            ],
+            username: '',
+            role: '',
+            items: [],
         } 
     }, 
     mounted () {
+        this.setUsername();
+        this.setRole();
+        this.cekRole();
+
     },
     methods: {
+        setRole() {
+            this.role = localStorage.getItem('role');
+        },
+        setUsername() {
+            this.username = localStorage.getItem('username');
+        },
+        cekRole(){
+            var role = this.role;
+            if(role == 'OWNER'){
+                this.items = this.owner;
+            }else if(role == 'CS'){
+                this.items = this.cs;
+            }else if(role == 'KASIR'){
+                this.items = this.kasir;
+            }
+        },
         submitLogout() {
-            localStorage.removeItem('username')
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            this.username = '';
+            this.role = '';
             this.$router.push({
                     name: 'login'
                 })
         },
     },
     computed: {
+    ...mapGetters({
+        owner: "side/getOwner",
+        cs : "side/getCs",
+        kasir : "side/getKasir"
+    })
     // bg () {
     //     return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
     // },

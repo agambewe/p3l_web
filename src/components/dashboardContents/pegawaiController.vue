@@ -36,13 +36,14 @@
                                         <v-text-field v-model="form.username" label="Username"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-overflow-btn 
-                                        v-model="form.role" 
-                                        label="Role"
-                                        class="my-2" 
-                                        :items="role_data"
-                                        item-value="text">
-                                        </v-overflow-btn>
+                                        <v-autocomplete
+                                            v-model="form.role"
+                                            :items="role_data"
+                                            item-value="text"
+                                            label="Role"
+                                            required
+                                            hide-selected>
+                                        </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
                                         <v-menu

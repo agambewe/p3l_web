@@ -1,8 +1,8 @@
-import Vue from 'vue' 
+import Vue from 'vue'
 import App from './App'
 import Axios from 'axios' 
+import store from './store';
 import router from './router' 
-// import swal from 'sweetalert'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import vuetify from './plugins/vuetify';
@@ -31,6 +31,7 @@ Vue.use(VueSweetalert2, options);
 new Vue({ 
   render: h => h(App), 
   router,
+  store,
   vuetify, 
   components: { App } 
 }).$mount('#app')

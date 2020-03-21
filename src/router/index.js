@@ -25,7 +25,17 @@ const routes = [
             { name: 'PegawaiTerhapus', path: '/pegawai/terhapus', component: loadSampah('pegawaiController') },
             { name: 'CustomerController', path: '/customer', component: loadView('customerController') },
             { name: 'CustomerTerhapus', path: '/customer/terhapus', component: loadSampah('customerController') },
-            { name: 'HewanController', path: '/hewan', component: loadView('hewanController') },
+            { name: 'HewanController', 
+                path: '/hewan', 
+                component: loadView('hewanController'),
+                beforeEnter: (to, from, next) => {
+                    if(localStorage.getItem('role')=="CS" || localStorage.getItem('role')=="OWNER") {
+                        next();
+                    } else{
+                        next('/login');
+                    }
+                },
+            },
             { name: 'HewanTerhapus', path: '/hewan/terhapus', component: loadSampah('hewanController') },
             { name: 'ProdukController', path: '/produk', component: loadView('produkController') },
             { name: 'LayananController', path: '/layanan', component: loadView('layananController') },
