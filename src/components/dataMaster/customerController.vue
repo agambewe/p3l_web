@@ -216,8 +216,7 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
-                this.cek = -1
+                this.resetForm();
             },
             readData() {
                 var uri = this.$apiUrl + '/customer/'

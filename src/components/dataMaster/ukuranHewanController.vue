@@ -1,7 +1,7 @@
 <template>
     <v-container dark>
         <v-container grid-list-md mb-0>
-            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Jenis Hewan</h1>
+            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Ukuran Hewan</h1>
             <v-layout row wrap style="margin:10px">
                 <v-dialog v-model="dialog" persistent max-width="300px">
                     <template v-slot:activator="{ on }">
@@ -23,7 +23,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="form.nama" label="Nama Jenis"></v-text-field>
+                                        <v-text-field v-model="form.nama" label="Nama Ukuran"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -36,7 +36,7 @@
                     </v-card>
                 </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="jenisHewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="ukuranHewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
@@ -60,6 +60,12 @@
                     </tbody>
                 </template>
             </v-data-table>
+            <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
+                {{ text }}
+                <v-btn dark text @click="snackbar = false">
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-container>
     </v-container>
 </template>
@@ -72,13 +78,15 @@
     tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 0, 0, .05);
     }
-
     .flex {
         display: -webkit-box;
         display: -moz-box;
         display: -ms-flexbox;
         display: -webkit-flex;
         display: flex;
+    }
+    .v-select__selections {
+        max-width: 50px
     }
 </style>
 
@@ -109,13 +117,13 @@
                         value: 'updated_at'
                     },
                 ],
-                jenisHewan: [],
+                ukuranHewan: [],
                 form: {
                     nama: '',
                 },
                 updatedId: '',
                 errors: '',
-                jenis: new FormData,
+                ukuran: new FormData,
             }
         },
         computed: {
@@ -129,8 +137,7 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
-                this.cek = -1
+                this.resetForm();
             },
             readData() {
                 var set_token = {
@@ -138,17 +145,17 @@
                         Authorization: 'Bearer ' + localStorage.getItem('token')
                     }
                 }
-                var uri = this.$apiUrl + '/jenis-hewan/'
+                var uri = this.$apiUrl + '/ukuran-hewan/'
                 this.$http.get(uri, set_token).then(response => {
-                    this.jenisHewan = response.data
+                    this.ukuranHewan = response.data
                 })
             },
             createData() {
-                this.jenis.append('nama', this.form.nama);
+                this.ukuran.append('nama', this.form.nama);
 
-                var uri = this.$apiUrl + '/jenis-hewan/'
+                var uri = this.$apiUrl + '/ukuran-hewan/'
                 this.load = true
-                this.$http.post(uri, this.jenis).then(response => {
+                this.$http.post(uri, this.ukuran).then(response => {
                     this.$swal({
                         icon: 'success',
                         title: response.data.message,
@@ -163,7 +170,7 @@
                     this.errors = error
                     this.$swal({
                         icon: 'error',
-                        title: 'Gagal menambah data!',
+                        title: 'Gagal mengubah data!',
                         text: 'Coba lagi ..',
                         showConfirmButton: false,
                         timer: 1500
@@ -180,11 +187,11 @@
                 console.log(this.typeInput);
             },
             updateData() {
-                this.jenis.append('nama', this.form.nama);
+                this.ukuran.append('nama', this.form.nama);
 
-                var uri = this.$apiUrl + '/jenis-hewan/' + this.updatedId;
+                var uri = this.$apiUrl + '/ukuran-hewan/' + this.updatedId;
                 this.load = true
-                this.$http.post(uri, this.jenis).then(response => {
+                this.$http.post(uri, this.ukuran).then(response => {
                     this.$swal({
                         icon: 'success',
                         title: response.data.message,
@@ -210,8 +217,8 @@
             },
             deleteData(deleteId) {
                 //mengahapus data 
-                var uri = this.$apiUrl + '/jenis-hewan/' + deleteId;
-                //data dihapus berdasarkan id 
+                var uri = this.$apiUrl + '/ukuran-hewan/' + deleteId;
+                
                 this.$swal({
                     title: 'Apa kamu yakin??',
                     text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
@@ -229,7 +236,7 @@
                     if (!result.value) {
                         this.$http.delete(uri).then(response => {
                             this.$swal({
-                            title: response.data.message,
+                            text: response.data.message,
                             icon: 'success'})
                             this.readData();
                         }).catch(error => {

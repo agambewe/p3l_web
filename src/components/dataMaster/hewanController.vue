@@ -253,7 +253,6 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
                 this.resetForm();
             },
             readDataJenisHewan() {

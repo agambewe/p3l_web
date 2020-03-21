@@ -3,15 +3,24 @@ export default {
 
     state: {
         owner: [
+            // { 
+            //     title: 'Dashboard', 
+            //     path: '/', 
+            //     icon: 'mdi-home' 
+            // },
             { 
-                title: 'Dashboard', 
-                path: '/', 
-                icon: 'mdi-home' 
-            },
-            { 
-                title: 'User', 
-                path: '/user', 
-                icon: 'mdi-human-male' 
+                title: 'Pengadaan',
+                icon: 'mdi-truck-fast', 
+                items: [
+                    { 
+                        title: 'Data Supplier', 
+                        path: '/supplier',
+                    }, 
+                    { 
+                        title: 'Pengadaan produk', 
+                        path: '/pengadaan',
+                    }, 
+                ]
             },  
             {
                 title: 'Data Master',
@@ -45,7 +54,7 @@ export default {
                     { 
                         title: 'Jenis Hewan', 
                         path: '/jenis-hewan',
-                    }, 
+                    },
                 ],
             },
             {

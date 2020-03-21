@@ -247,8 +247,7 @@
                 this.typeInput = 'Tambah';
             },
             clear() {
-                this.form = {}
-                this.cek = -1
+                this.resetForm();
             },
             readData() {
                 var set_token = {
@@ -389,6 +388,12 @@
             resetForm() {
                 this.form = {
                     nama: '',
+                    username: '',
+                    alamat: '',
+                    tanggal_lahir: '',
+                    telepon: '',
+                    role: '',
+                    password: '',
                 }
             },
             formatDate (date) {
