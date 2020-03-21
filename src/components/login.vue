@@ -90,7 +90,8 @@ export default {
                             })
                             this.load = false;
                         }else{
-                            localStorage.setItem('username', response.data.user)
+                            localStorage.setItem('username', response.data.user);
+                            localStorage.setItem('role', response.data.role);
                             this.$swal({
                                 icon: 'success',
                                 title: response.data.message,

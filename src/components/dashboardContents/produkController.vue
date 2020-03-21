@@ -27,12 +27,12 @@
                                     <img v-else :src="$apiUrl + '/../uploads/' + form.foto" alt="Foto produk" width="150" height="150"><br>
                                     <label>Ubah gambar? </label>
                                     <input type="checkbox" id="checkbox_img" v-model="checked_img"><br>
-                                    <input v-if="checked_img" type="file" accept="image/*" @change="onChange" />
+                                    <input v-if="checked_img" id="foto" type="file" accept="image/*" @change="onChange" />
                                 </v-col>
                                 <v-col v-else cols="12" sm="12" md="12">
                                     <img v-if="imageUrl" :src="imageUrl" alt="Foto produk" width="150" height="150">
                                     <img v-else :src="$apiUrl + '/../uploads/default.png'" alt="Foto produk" width="150" height="150"><br>
-                                    <input type="file" accept="image/*" @change="onChange" />
+                                    <input id="foto" type="file" accept="image/*" @change="onChange" />
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12">
                                     <v-text-field v-model="form.nama" label="Nama"></v-text-field>
@@ -125,12 +125,6 @@
                 </tbody>
             </template>
         </v-data-table>
-        <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-            {{ text }}
-            <v-btn dark text @click="snackbar = false">
-                Close
-            </v-btn>
-        </v-snackbar>
     </v-container>
 </v-container>
 </template>
@@ -167,10 +161,8 @@ export default {
             load: false,
             dialog: false,
             dialog2: false,
-            color: '',
             text: '',
             checked_img: false,
-            snackbar: false,
             checked: false,
             typeInput: 'Tambah',
             keyword: '',
@@ -204,11 +196,11 @@ export default {
                     value: 'harga'
                 },
                 {
-                    text: 'Created At',
+                    text: 'Dibuat pada',
                     value: 'created_at'
                 },
                 {
-                    text: 'Updated At',
+                    text: 'Diubah pada',
                     value: 'updated_at'
                 },
                 // {
@@ -298,7 +290,7 @@ export default {
                 this.errors = error
                 this.$swal({
                     icon: 'error',
-                    title: 'Gagal mengubah data!',
+                    title: 'Gagal menambah data!',
                     text: 'Coba lagi ..',
                     showConfirmButton: false,
                     timer: 1500
@@ -406,9 +398,10 @@ export default {
                     foto: '',
                 },
 
-                this.produk.foto = '';
+            this.produk.foto = '';
             this.checked_img = false;
             this.imageUrl = '';
+            document.getElementById('foto').value=''
         },
     },
     mounted() {

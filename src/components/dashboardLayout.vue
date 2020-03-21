@@ -95,6 +95,14 @@ export default {
                     path: '/pegawai',
                 }, 
                 { 
+                    title: 'Customer', 
+                    path: '/customer',
+                }, 
+                { 
+                    title: 'Hewan', 
+                    path: '/hewan',
+                }, 
+                { 
                     title: 'Produk', 
                     path: '/produk',
                 }, 

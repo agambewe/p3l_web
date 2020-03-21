@@ -1,21 +1,17 @@
 <template>
     <v-container dark>
         <v-container grid-list-md mb-0>
-            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Data Pegawai</h1>
+            <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Data Hewan</h1>
             <v-layout row wrap style="margin:10px">
-                <!-- <v-flex xs12 class="text-left">
-                    <v-text-field v-model="keyword" append-icon="mdi-file-search" label="Search" single-line hide-details>
-                    </v-text-field>
-                </v-flex> -->
                 <v-dialog v-model="dialog" persistent max-width="500px">
                     <template v-slot:activator="{ on }">
                         <v-flex class="flex" xs8 style="float:right;widht:300">
                             <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear()">
                                 <v-icon dark>mdi-plus</v-icon>
                             </v-btn>
-                            <!-- <v-btn small class="mx-2" fab color="deep-orange darken-3" v-on="on" router to="/pegawai/terhapus">
+                            <v-btn small class="mx-2" fab color="deep-orange darken-3" v-on="on" router to="/hewan/terhapus">
                                 <v-icon dark>mdi-redo</v-icon>
-                            </v-btn> -->
+                            </v-btn>
                         </v-flex>
                         <v-divider class="mx-1" inset vertical></v-divider>
                         <v-flex xs4 >
@@ -32,17 +28,29 @@
                                     <v-col cols="12" sm="6" md="6">
                                         <v-text-field v-model="form.nama" label="Nama"></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.username" label="Username"></v-text-field>
+                                    <v-col cols="6" sm="6" md="6">
+                                        <v-autocomplete
+                                            v-model="form.id_jenis"
+                                            :items="jenisHewan"
+                                            item-value="id"
+                                            item-text="nama"
+                                            label="Jenis Hewan"
+                                            required
+                                            hide-selected
+                                            clearable>
+                                        </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-overflow-btn 
-                                        v-model="form.role" 
-                                        label="Role"
-                                        class="my-2" 
-                                        :items="role_data"
-                                        item-value="text">
-                                        </v-overflow-btn>
+                                    <v-col cols="6" sm="6" md="6">
+                                        <v-autocomplete
+                                            v-model="form.id_customer"
+                                            :items="customer"
+                                            item-value="id"
+                                            item-text="nama"
+                                            label="Nama Pemilik"
+                                            required
+                                            hide-selected
+                                            clearable>
+                                        </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
                                         <v-menu
@@ -66,21 +74,6 @@
                                             <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
                                         </v-menu>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.telepon" label="Telepon"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-textarea v-model="form.alamat" label="Alamat"></v-textarea>
-                                    </v-col>
-                                    <v-col v-if="this.typeInput === 'Ubah'" cols="12" sm="6" md="12">
-                                    <label>Ubah password? </label>
-                                        <input type="checkbox" id="checkbox" v-model="checked"><br><br>
-                                            <v-text-field v-if="checked" v-model="form.password" type="password" label="Password Baru"></v-text-field>
-                                            <v-text-field v-else v-show="false" v-model="form.password" type="password" label="Password"></v-text-field>
-                                    </v-col>
-                                    <v-col v-else cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.password" label="password" type="password"></v-text-field>
-                                    </v-col>
                                 </v-row>
                             </v-container>
                         </v-card-text>
@@ -92,7 +85,7 @@
                     </v-card>
                 </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="pegawai" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="hewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
@@ -107,12 +100,32 @@
                                 </div>
                             </td>
                             <td>{{ item.nama }}</td>
-                            <td>{{ item.username }}</td>
-                            <td>{{ item.alamat }}</td>
+                            <td>
+                                <v-autocomplete
+                                    v-model="item.id_jenis"
+                                    :items="jenisHewan"
+                                    item-value="id"
+                                    item-text="nama"
+                                    readonly>
+                                </v-autocomplete>
+                            </td>
+                            <td>
+                                <v-autocomplete
+                                    v-model="item.id_customer" 
+                                    :items="customer"
+                                    item-value="id"
+                                    item-text="nama"
+                                    readonly>
+                                </v-autocomplete>
+                            </td>
                             <td>{{ item.tanggal_lahir }}</td>
-                            <td>{{ item.telepon }}</td>
-                            <td>{{ item.role }}</td>
-                            <!-- <td>{{ item.password }}</td> -->
+                            <td>{{ item.created_by}}</td>
+                            <td v-if="item.updated_by==NULL">
+                                -
+                            </td>
+                            <td v-else>
+                                {{ item.updated_by }}
+                            </td>
                             <td>{{ item.created_at}}</td>
                             <td>{{ item.updated_at }}</td>
                         </tr>
@@ -136,9 +149,10 @@
     }
 
     .v-select__selections {
-        max-width: 100px;
+        max-width: 50px;
         border: none;
     }
+
     .flex {
         display: -webkit-box;
         display: -moz-box;
@@ -154,7 +168,6 @@
             return {
                 load: false,
                 dialog: false,
-                checked: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -168,29 +181,25 @@
                         value: 'nama'
                     },
                     {
-                        text: 'Username',
-                        value: 'username'
+                        text: 'Jenis',
+                        value: 'id_jenis'
                     },
                     {
-                        text: 'Alamat',
-                        value: 'alamat'
+                        text: 'Pemilik',
+                        value: 'id_customer'
                     },
                     {
                         text: 'Tanggal Lahir',
                         value: 'tanggal_lahir'
                     },
                     {
-                        text: 'Telepon',
-                        value: 'telepon'
+                        text: 'Dibuat oleh',
+                        value: 'created_by'
                     },
                     {
-                        text: 'Role',
-                        value: 'role'
+                        text: 'Diubah oleh',
+                        value: 'updated_by'
                     },
-                    // {
-                    //     text: 'Password',
-                    //     value: 'password'
-                    // },
                     {
                         text: 'Dibuat pada',
                         value: 'created_at'
@@ -200,19 +209,17 @@
                         value: 'updated_at'
                     }
                 ],
-                role_data: [
-                    { text: 'CS' },
-                    { text: 'KASIR' }
-                ],
-                pegawai: [],
+                hewan: [],
+                jenisHewan: [],
+                customer: [],
                 form: {
+                    id_jenis: '',
+                    id_customer: '',
                     nama: '',
-                    username: '',
-                    alamat: '',
                     tanggal_lahir: '',
-                    telepon: '',
-                    role: '',
-                    password: '',
+                    created_by: '',
+                    updated_by: '',
+                    delete_by: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -247,29 +254,35 @@
             },
             clear() {
                 this.form = {}
-                this.cek = -1
+                this.resetForm();
+            },
+            readDataJenisHewan() {
+                var uri = this.$apiUrl + '/jenis-hewan/'
+                this.$http.get(uri).then(response => {
+                    this.jenisHewan = response.data
+                })
+            },
+            readDataCustomer() {
+                var uri = this.$apiUrl + '/customer/'
+                this.$http.get(uri).then(response => {
+                    this.customer = response.data
+                })
             },
             readData() {
-                var set_token = {
-                    headers: {
-                        Authorization: 'Bearer ' + localStorage.getItem('token')
-                    }
-                }
-                var uri = this.$apiUrl + '/pegawai/'
-                this.$http.get(uri, set_token).then(response => {
-                    this.pegawai = response.data
+                var uri = this.$apiUrl + '/hewan/'
+                this.$http.get(uri).then(response => {
+                    this.hewan = response.data
                 })
             },
             createData() {
+                this.user.append('id_jenis', this.form.id_jenis);
+                this.user.append('id_customer', this.form.id_customer);
                 this.user.append('nama', this.form.nama);
-                this.user.append('username', this.form.username);
-                this.user.append('alamat', this.form.alamat);
                 this.user.append('tanggal_lahir', this.form.tanggal_lahir);
-                this.user.append('telepon', this.form.telepon);
-                this.user.append('role', this.form.role);
-                this.user.append('password', this.form.password);
+                this.user.append('created_by', localStorage.getItem('username'));
+                console.log(this.form)
 
-                var uri = this.$apiUrl + '/pegawai/'
+                var uri = this.$apiUrl + '/hewan/'
                 this.load = true
                 this.$http.post(uri, this.user).then(response => {
                     this.$swal({
@@ -298,26 +311,23 @@
                 console.log(this.typeInput);
                 this.typeInput = 'Ubah';
                 this.dialog = true;
+                this.form.id_jenis = item.id_jenis;
+                this.form.id_customer = item.id_customer;
                 this.form.nama = item.nama;
-                this.form.username = item.username;
-                this.form.alamat = item.alamat;
                 this.form.tanggal_lahir = item.tanggal_lahir;
-                this.form.telepon = item.telepon;
-                this.form.role = item.role;
+                this.form.updated_by = localStorage.getItem('username');
                 this.updatedId = item.id;
                 console.log(this.typeInput);
             },
             updateData() {
+                this.user.append('id_jenis', this.form.id_jenis);
+                this.user.append('id_customer', this.form.id_customer);
                 this.user.append('nama', this.form.nama);
-                this.user.append('username', this.form.username);
-                this.user.append('alamat', this.form.alamat);
                 this.user.append('tanggal_lahir', this.form.tanggal_lahir);
-                this.user.append('telepon', this.form.telepon);
-                this.user.append('role', this.form.role);
-                if (this.checked)
-                    this.user.append('password', this.form.password);
+                this.user.append('updated_by', this.form.updated_by);
+                console.log(this.form);
 
-                var uri = this.$apiUrl + '/pegawai/' + this.updatedId;
+                var uri = this.$apiUrl + '/hewan/' + this.updatedId;
                 this.load = true
                 this.$http.post(uri, this.user).then(response => {
                     this.$swal({
@@ -343,12 +353,30 @@
                     this.load = false;
                 })
             },
+
+            setDeletedBy(deleteId) {
+                this.user.append('deleted_by', localStorage.getItem('username'));
+                console.log(this.form);
+
+                var uri = this.$apiUrl + '/hewan/by/' + deleteId;
+                this.load = true
+                this.$http.post(uri, this.user).then(response => {
+                    this.load = false;
+                    this.close();
+                    this.readData(); //refresh data ini 
+                    this.resetForm();
+                }).catch(error => {
+                    this.errors = error
+                    this.load = false;
+                })
+            },
+
             deleteData(deleteId) {
                 //mengahapus data 
-                var uri = this.$apiUrl + '/pegawai/' + deleteId;
+                var uri = this.$apiUrl + '/hewan/' + deleteId;
                 //data dihapus berdasarkan id 
                 this.$swal({
-                    title: 'Apa kamu yakin??',
+                    title: 'Apa anda yakin??',
                     text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
                     icon: 'warning',
                     cancelButtonColor: '#FF5252',
@@ -366,6 +394,7 @@
                             this.$swal({
                             title: response.data.message,
                             icon: 'success'})
+                            this.setDeletedBy(deleteId);
                             this.readData();
                         }).catch(error => {
                         this.errors = error
@@ -386,8 +415,14 @@
                 }
             },
             resetForm() {
-                this.form = {
+                this.form= {
+                    id_jenis: '',
+                    id_customer: '',
                     nama: '',
+                    tanggal_lahir: '',
+                    created_by: '',
+                    updated_by: '',
+                    delete_by: '',
                 }
             },
             formatDate (date) {
@@ -405,6 +440,8 @@
         },
         mounted() {
             this.readData();
+            this.readDataJenisHewan();
+            this.readDataCustomer();
         },
     }
 </script>

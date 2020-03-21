@@ -26,14 +26,16 @@
                                         <v-text-field v-model="form.nama" label="Nama Layanan"></v-text-field>
                                     </v-col>
                                     <v-col cols="6" sm="6" md="6">
-                                        <v-overflow-btn 
-                                        v-model="form.id_ukuran" 
-                                        label="Ukuran"
-                                        class="my-2" 
-                                        :items="ukuranHewan"
-                                        item-value="id"
-                                        item-text="nama">
-                                        </v-overflow-btn>
+                                        <v-select
+                                            v-model="form.id_ukuran"
+                                            :items="ukuranHewan"
+                                            item-value="id"
+                                            item-text="nama"
+                                            label="Ukuran Hewan"
+                                            required
+                                            hide-selected
+                                            clearable>
+                                        </v-select>
                                     </v-col>
                                     <v-col cols="6" sm="6" md="6">
                                         <v-text-field v-model="form.harga" type="number" label="Harga"></v-text-field>
@@ -65,14 +67,14 @@
                             </td>
                             <td>{{ item.nama }}</td>
                             <td>
-                            <v-select
-                                v-model="item.id_ukuran" 
-                                label="Ukuran"
-                                readonly
-                                :items="ukuranHewan"
-                                item-value="id"
-                                item-text="nama">
-                            </v-select></td>
+                                <v-select
+                                    v-model="item.id_ukuran" 
+                                    :items="ukuranHewan"
+                                    item-value="id"
+                                    item-text="nama"
+                                    readonly>
+                                </v-select>
+                            </td>
                             <td>{{ item.harga }}</td>
                             <td>{{ item.created_at}}</td>
                             <td>{{ item.updated_at }}</td>
@@ -83,12 +85,6 @@
                     </tbody>
                 </template>
             </v-data-table>
-            <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-                {{ text }}
-                <v-btn dark text @click="snackbar = false">
-                    Close
-                </v-btn>
-            </v-snackbar>
         </v-container>
     </v-container>
 </template>
@@ -123,8 +119,6 @@
             return {
                 load: false,
                 dialog: false,
-                color: '',
-                snackbar: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -146,11 +140,11 @@
                         value: 'harga'
                     },
                     {
-                        text: 'Created At',
+                        text: 'Dibuat pada',
                         value: 'created_at'
                     },
                     {
-                        text: 'Updated At',
+                        text: 'Diubah pada',
                         value: 'updated_at'
                     },
                 ],
@@ -213,7 +207,7 @@
                     this.errors = error
                     this.$swal({
                         icon: 'error',
-                        title: 'Gagal mengubah data!',
+                        title: 'Gagal menambah data!',
                         text: 'Coba lagi ..',
                         showConfirmButton: false,
                         timer: 1500

@@ -60,12 +60,6 @@
                     </tbody>
                 </template>
             </v-data-table>
-            <v-snackbar v-model="snackbar" :color="color" :multi-line="true" :timeout="3000">
-                {{ text }}
-                <v-btn dark text @click="snackbar = false">
-                    Close
-                </v-btn>
-            </v-snackbar>
         </v-container>
     </v-container>
 </template>
@@ -94,8 +88,6 @@
             return {
                 load: false,
                 dialog: false,
-                color: '',
-                snackbar: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -109,11 +101,11 @@
                         value: 'nama'
                     },
                     {
-                        text: 'Created At',
+                        text: 'Dibuat pada',
                         value: 'created_at'
                     },
                     {
-                        text: 'Updated At',
+                        text: 'Diubah pada',
                         value: 'updated_at'
                     },
                 ],
@@ -171,7 +163,7 @@
                     this.errors = error
                     this.$swal({
                         icon: 'error',
-                        title: 'Gagal mengubah data!',
+                        title: 'Gagal menambah data!',
                         text: 'Coba lagi ..',
                         showConfirmButton: false,
                         timer: 1500

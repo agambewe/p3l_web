@@ -23,6 +23,10 @@ const routes = [
         children: [ 
             { name: 'PegawaiController', path: '/pegawai', component: loadView('pegawaiController') },
             { name: 'PegawaiTerhapus', path: '/pegawai/terhapus', component: loadSampah('pegawaiController') },
+            { name: 'CustomerController', path: '/customer', component: loadView('customerController') },
+            { name: 'CustomerTerhapus', path: '/customer/terhapus', component: loadSampah('customerController') },
+            { name: 'HewanController', path: '/hewan', component: loadView('hewanController') },
+            { name: 'HewanTerhapus', path: '/hewan/terhapus', component: loadSampah('hewanController') },
             { name: 'ProdukController', path: '/produk', component: loadView('produkController') },
             { name: 'LayananController', path: '/layanan', component: loadView('layananController') },
             { name: 'UkuranHewanController', path: '/ukuran-hewan', component: loadView('ukuranHewanController') },

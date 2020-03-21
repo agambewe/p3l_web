@@ -96,8 +96,6 @@
             return {
                 load: false,
                 dialog: false,
-                color: '',
-                snackbar: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -111,11 +109,11 @@
                         value: 'nama'
                     },
                     {
-                        text: 'Created At',
+                        text: 'Dibuat pada',
                         value: 'created_at'
                     },
                     {
-                        text: 'Updated At',
+                        text: 'Diubah pada',
                         value: 'updated_at'
                     },
                 ],
