@@ -154,9 +154,9 @@ export default {
         cs : "side/getCs",
         kasir : "side/getKasir"
     }),
-    bg () {
-        return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
-    },
+    // bg () {
+    //     return 'https://www.htmlcsscolor.com/preview/gallery/4E5862.png'
+    // },
 },
 } 
 </script>

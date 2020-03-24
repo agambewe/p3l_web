@@ -8,6 +8,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import vuetify from './plugins/vuetify';
 import * as VeeValidate from 'vee-validate'
 Vue.use(VeeValidate)
+window.Vue = Vue;
 Vue.prototype.$http = Axios; 
 Vue.prototype.$apiUrl = 'http://127.0.0.1:8000/api'; 
 

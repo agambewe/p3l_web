@@ -1,6 +1,6 @@
 import Vue from 'vue' 
 import Router from 'vue-router' 
-const DashboardLayout = () => import(/* webpackChunkName: "dashboard" */ '../components/dashboardLayout.vue') 
+const SideLayout = () => import(/* webpackChunkName: "dashboard" */ '../components/sideLayout.vue') 
 const loginLayout = () => import(/* webpackChunkName: "dashboard" */ '../components/login.vue') 
 function loadView(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/dataMaster/${view}.vue`) 
@@ -13,7 +13,7 @@ function loadRest(view) {
 } 
 const routes = [ 
     { name: 'login', path: '/login', component: loginLayout },
-    { name: 'dashboardLayout', path: '/', component: DashboardLayout, 
+    { name: 'dashboardLayout', path: '/', component: SideLayout, 
         beforeEnter: (to, from, next) => {
             if(localStorage.getItem('username')) {
                 next();
@@ -22,7 +22,7 @@ const routes = [
             }
         },
     },
-    { path: '/', component: DashboardLayout,
+    { path: '/', component: SideLayout,
         children: [ 
             //Sampah
             { name: 'CustomerTerhapus', path: '/customer/terhapus', component: loadSampah('customerController') },
@@ -51,6 +51,7 @@ const routes = [
             //Pengadaan
             { name: 'SupplierController', path: '/supplier', component: loadRest('supplierController') },
             { name: 'PengadaanController', path: '/pengadaan', component: loadRest('pengadaanController') },
+            { name: 'DetailController', path: '/detail-restock', component: loadRest('detailController') },
         ],
         beforeEnter: (to, from, next) => {
             if(localStorage.getItem('username')) {
