@@ -94,7 +94,7 @@
                                     <v-btn icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
-                                    <v-btn icon color="red accent-2" @click="deleteData(item.id)">
+                                    <v-btn icon color="red accent-2" @click="setDeletedBy(item.id)">
                                         <v-icon>mdi-delete-empty</v-icon>
                                     </v-btn>
                                 </div>
@@ -358,22 +358,6 @@
                 console.log(this.form);
 
                 var uri = this.$apiUrl + '/hewan/by/' + deleteId;
-                this.load = true
-                this.$http.post(uri, this.user).then(response => {
-                    this.load = false;
-                    this.close();
-                    this.readData(); //refresh data ini 
-                    this.resetForm();
-                }).catch(error => {
-                    this.errors = error
-                    this.load = false;
-                })
-            },
-
-            deleteData(deleteId) {
-                //mengahapus data 
-                var uri = this.$apiUrl + '/hewan/' + deleteId;
-                //data dihapus berdasarkan id 
                 this.$swal({
                     title: 'Apa anda yakin??',
                     text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
@@ -389,13 +373,16 @@
                     dangerMode: true,
                 }).then((result) => {
                     if (!result.value) {
-                        this.$http.delete(uri).then(response => {
+                        this.load = true
+                        this.$http.post(uri, this.user).then(response => {
                             this.$swal({
                             title: response.data.message,
                             icon: 'success'})
-                            this.setDeletedBy(deleteId);
-                            this.readData();
-                        }).catch(error => {
+                            this.load = false;
+                            this.close();
+                            this.readData(); //refresh data ini 
+                            this.resetForm();
+                }).catch(error => {
                         this.errors = error
                         this.$swal({
                             title: 'Gagal menghapus data!',
@@ -406,6 +393,43 @@
                     }
                 })
             },
+
+            // deleteData(deleteId) {
+            //     //mengahapus data 
+            //     var uri = this.$apiUrl + '/hewan/' + deleteId;
+            //     //data dihapus berdasarkan id 
+            //     this.$swal({
+            //         title: 'Apa anda yakin??',
+            //         text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
+            //         icon: 'warning',
+            //         cancelButtonColor: '#FF5252',
+            //         confirmButtonColor: '#BDBDBD',
+            //         cancelButtonText: 'Oke!',
+            //         confirmButtonText: 'Batal',
+            //         showCancelButton: true,
+            //         allowEscapeKey: false,
+            //         // reverseButtons: true,
+            //         allowOutsideClick: false,
+            //         dangerMode: true,
+            //     }).then((result) => {
+            //         if (!result.value) {
+            //             this.$http.delete(uri).then(response => {
+            //                 this.$swal({
+            //                 title: response.data.message,
+            //                 icon: 'success'})
+            //                 this.setDeletedBy(deleteId);
+            //                 this.readData();
+            //             }).catch(error => {
+            //             this.errors = error
+            //             this.$swal({
+            //                 title: 'Gagal menghapus data!',
+            //                 text: 'Coba lagi ..',
+            //                 icon: 'error',
+            //                 });
+            //             })
+            //         }
+            //     })
+            // },
             setForm() {
                 if (this.typeInput === 'Tambah') {
                     this.createData()

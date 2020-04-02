@@ -29,7 +29,9 @@ export default {
     actions: {
         async readData(context) {
             return new Promise((resolve) => {
-                Axios.get('http://127.0.0.1:8000/api/pegawai/').then(response => {
+                var uri = this.$apiUrl + '/pegawai/'
+                this.$http.get(uri).then(response => {
+                // Axios.get('http://127.0.0.1:8000/api/pegawai/').then(response => {
                     context.commit('setItem',response.data)
                     resolve(response.data);
                 })

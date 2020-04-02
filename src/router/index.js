@@ -6,7 +6,7 @@ function loadView(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/dataMaster/${view}.vue`) 
 } 
 function loadSampah(view) {
-    return () => import(/* webpackChunkName: "view-[request]" */ `../components/dataMaster/${view}.vue`) 
+    return () => import(/* webpackChunkName: "view-[request]" */ `../components/keranjangSampah/${view}.vue`) 
 }
 function loadRest(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/pengadaan/${view}.vue`) 
