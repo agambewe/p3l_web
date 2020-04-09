@@ -26,7 +26,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.nama" label="Nama"></v-text-field>
+                                        <v-text-field v-model="form.nama" label="Nama" required></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
                                         <v-menu
@@ -51,10 +51,10 @@
                                         </v-menu>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.telepon" label="Telepon"></v-text-field>
+                                        <v-text-field v-model="form.telepon" label="Telepon" required></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-textarea v-model="form.alamat" label="Alamat"></v-textarea>
+                                        <v-textarea v-model="form.alamat" label="Alamat" required></v-textarea>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -128,6 +128,23 @@
 </style>
 
 <script>
+    import {
+        required,
+    } from 'vee-validate/dist/rules'
+    import {
+        extend,
+        ValidationObserver,
+        ValidationProvider,
+        setInteractionMode
+    } from 'vee-validate'
+
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong',
+    })
+
     export default {
         data() {
             return {

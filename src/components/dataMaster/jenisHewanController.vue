@@ -23,7 +23,7 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="form.nama" label="Nama Jenis"></v-text-field>
+                                        <v-text-field v-model="form.nama" label="Nama Jenis" autofocus required :rules="[() => form.nama.length > 0 || 'Nama Jenis tidak boleh kosong']"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -35,6 +35,26 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogDetail" persistent max-width="528px">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline text-md-center">Detail data</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <tbody>
+                                <ul>
+                                    <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                    <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah }}</ul>
+                                </ul>
+                            </tbody>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             </v-layout>
             <v-data-table :headers="headers" :items-per-page="5" :items="jenisHewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
@@ -42,6 +62,9 @@
                         <tr v-for="item in items" :key="item.id">
                             <td >
                                 <div class="flex">
+                                    <v-btn icon color="blue lighten-2" @click="readDetail(item)">
+                                        <v-icon>mdi-arrow-down</v-icon>
+                                    </v-btn>    
                                     <v-btn icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
@@ -51,8 +74,8 @@
                                 </div>
                             </td>
                             <td>{{ item.nama }}</td>
-                            <td>{{ item.created_at}}</td>
-                            <td>{{ item.updated_at }}</td>
+                            <!-- <td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td> -->
                         </tr>
                     </tbody>
                     <tbody v-else>
@@ -88,6 +111,7 @@
             return {
                 load: false,
                 dialog: false,
+                dialogDetail: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -100,18 +124,22 @@
                         text: 'Nama',
                         value: 'nama'
                     },
-                    {
-                        text: 'Dibuat pada',
-                        value: 'created_at'
-                    },
-                    {
-                        text: 'Diubah pada',
-                        value: 'updated_at'
-                    },
+                    // {
+                    //     text: 'Dibuat pada',
+                    //     value: 'created_at'
+                    // },
+                    // {
+                    //     text: 'Diubah pada',
+                    //     value: 'updated_at'
+                    // },
                 ],
                 jenisHewan: [],
                 form: {
                     nama: '',
+                },
+                detail: {
+                    diubah: '',
+                    dibuat: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -130,6 +158,11 @@
             },
             clear() {
                 this.resetForm();
+            },
+            readDetail(item) {
+                this.dialogDetail = true
+                this.detail.dibuat = item.created_at
+                this.detail.diubah = item.updated_at
             },
             readData() {
                 var set_token = {
@@ -243,6 +276,7 @@
                 })
             },
             setForm() {
+                if(!this.form.nama) return true
                 if (this.typeInput === 'Tambah') {
                     this.createData()
                 } else {

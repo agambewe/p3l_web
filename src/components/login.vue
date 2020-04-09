@@ -10,7 +10,8 @@
                             <v-card-title primary-title>
                                 <h4>Login</h4>
                             </v-card-title>
-                            <ValidationObserver ref="observer" v-slot="{ validate, reset }">
+                            <!-- <ValidationObserver ref="observer" v-slot="{ validate, reset }"> -->
+                            <ValidationObserver ref="observer" v-slot="{  }">
                                 <v-form class="my-5">
                                     <ValidationProvider v-slot="{ errors }" name="username" rules="required|max:50">
                                         <v-text-field v-model="username" prepend-icon="mdi-human" :counter="50" :error-messages="errors" label="Username" required></v-text-field>
