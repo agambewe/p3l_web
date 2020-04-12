@@ -342,6 +342,7 @@ export default {
                     showConfirmButton: false,
                     timer: 1500
                 })
+                // console.log(error)
                 this.load = false;
             })
         },
@@ -401,7 +402,9 @@ export default {
             this.produk.foto = '';
             this.checked_img = false;
             this.imageUrl = '';
-            document.getElementById('foto').value=''
+            if (this.checked_img) {
+                document.getElementById('foto').value=''
+            }
         },
     },
     mounted() {
