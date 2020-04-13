@@ -1,6 +1,6 @@
 <template>
-<v-app>
-    <main>
+<v-app class="full-height">
+    <main class="full-height">
         <router-view></router-view>
     </main>
 </v-app>
@@ -11,3 +11,13 @@ export default {
     name: 'app'
 }
 </script>
+
+<style>
+html, body {
+    height: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+</style>

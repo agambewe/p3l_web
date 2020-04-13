@@ -66,17 +66,42 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogDetail" max-width="528px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline text-md-center">Detail Data {{ this.detail.nama }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <tbody>
+                                    <ul>
+                                        <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                        <ul># <strong>Dibuat oleh : </strong>{{ this.detail.dibuatoleh }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah }}</ul>
+                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh }}</ul>
+                                    </ul>
+                                </tbody>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="customer" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="customer" :sort-by="'updated_at'" :sort-desc="true" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td >
-                                <div class="flex">
-                                    <v-btn icon color="amber accent-3" @click="editHandler(item)">
+                                <div class="text-center">
+                                    <v-btn icon color="blue lighten-2" @click="readDetail(item)">
+                                        <v-icon>mdi-arrow-down</v-icon>
+                                    </v-btn>    
+                                    <v-btn v-if="role!='OWNER'" icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
-                                    <v-btn icon color="red accent-2" @click="deleteData(item.id)">
+                                    <v-btn v-if="role!='OWNER'" icon color="red accent-2" @click="setDeletedBy(item.id)">
                                         <v-icon>mdi-delete-empty</v-icon>
                                     </v-btn>
                                 </div>
@@ -85,7 +110,7 @@
                             <td>{{ item.alamat }}</td>
                             <td>{{ item.tanggal_lahir }}</td>
                             <td>{{ item.telepon }}</td>
-                            <td>{{ item.created_by}}</td>
+                            <!-- <td>{{ item.created_by}}</td>
                             <td v-if="item.updated_by==NULL">
                                 -
                             </td>
@@ -93,11 +118,11 @@
                                 {{ item.updated_by }}
                             </td>
                             <td>{{ item.created_at}}</td>
-                            <td>{{ item.updated_at }}</td>
+                            <td>{{ item.updated_at }}</td> -->
                         </tr>
                     </tbody>
                     <tbody v-else>
-                        <td :colspan="headers.length" class="text-center">Data masih kosong.</td>
+                        <td :colspan="headers.length" class="text-center">Data tidak ditemukan/ masih kosong.</td>
                     </tbody>
                 </template>
             </v-data-table>
@@ -113,7 +138,13 @@
     tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 0, 0, .05);
     }
-
+    .v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
+    }
     .v-select__selections {
         max-width: 100px;
         border: none;
@@ -150,13 +181,17 @@
             return {
                 load: false,
                 dialog: false,
+                dialogDetail: false,
                 typeInput: 'Tambah',
+                role: '',
                 keyword: '',
                 headers: [
                     {
                         text: 'Aksi',
                         value: null,
-                        sortable: false
+                        sortable: false,
+                        align: 'center',
+                        width: 150
                     },
                     {
                         text: 'Nama',
@@ -174,22 +209,22 @@
                         text: 'Telepon',
                         value: 'telepon'
                     },
-                    {
-                        text: 'Dibuat oleh',
-                        value: 'created_by'
-                    },
-                    {
-                        text: 'Diubah oleh',
-                        value: 'updated_by'
-                    },
-                    {
-                        text: 'Dibuat pada',
-                        value: 'created_at'
-                    },
-                    {
-                        text: 'Diubah pada',
-                        value: 'updated_at'
-                    }
+                    // {
+                    //     text: 'Dibuat oleh',
+                    //     value: 'created_by'
+                    // },
+                    // {
+                    //     text: 'Diubah oleh',
+                    //     value: 'updated_by'
+                    // },
+                    // {
+                    //     text: 'Dibuat pada',
+                    //     value: 'created_at'
+                    // },
+                    // {
+                    //     text: 'Diubah pada',
+                    //     value: 'updated_at'
+                    // }
                 ],
                 customer: [],
                 form: {
@@ -200,6 +235,13 @@
                     created_by: '',
                     updated_by: '',
                     delete_by: '',
+                },
+                detail: {
+                    nama: '',
+                    diubah: '',
+                    diubaholeh: '',
+                    dibuat: '',
+                    dibuatoleh: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -234,6 +276,14 @@
             },
             clear() {
                 this.resetForm();
+            },
+            readDetail(item) {
+                this.dialogDetail = true
+                this.detail.nama = item.nama
+                this.detail.dibuat = item.created_at
+                this.detail.dibuatoleh = item.created_by
+                this.detail.diubah = item.updated_at
+                this.detail.diubaholeh = item.updated_by
             },
             readData() {
                 var uri = this.$apiUrl + '/customer/'
@@ -274,7 +324,6 @@
                 })
             },
             editHandler(item) {
-                console.log(this.typeInput);
                 this.typeInput = 'Ubah';
                 this.dialog = true;
                 this.form.nama = item.nama;
@@ -283,7 +332,6 @@
                 this.form.telepon = item.telepon;
                 this.form.updated_by = localStorage.getItem('username');
                 this.updatedId = item.id;
-                console.log(this.typeInput);
             },
             updateData() {
                 this.user.append('nama', this.form.nama);
@@ -291,7 +339,7 @@
                 this.user.append('tanggal_lahir', this.form.tanggal_lahir);
                 this.user.append('telepon', this.form.telepon);
                 this.user.append('updated_by', this.form.updated_by);
-                console.log(this.form);
+                // console.log(this.form);
 
                 var uri = this.$apiUrl + '/customer/' + this.updatedId;
                 this.load = true
@@ -319,28 +367,10 @@
                     this.load = false;
                 })
             },
-
             setDeletedBy(deleteId) {
                 this.user.append('deleted_by', localStorage.getItem('username'));
-                console.log(this.form);
 
                 var uri = this.$apiUrl + '/customer/by/' + deleteId;
-                this.load = true
-                this.$http.post(uri, this.user).then(response => {
-                    this.load = false;
-                    this.close();
-                    this.readData(); //refresh data ini 
-                    this.resetForm();
-                }).catch(error => {
-                    this.errors = error
-                    this.load = false;
-                })
-            },
-
-            deleteData(deleteId) {
-                //mengahapus data 
-                var uri = this.$apiUrl + '/customer/' + deleteId;
-                //data dihapus berdasarkan id 
                 this.$swal({
                     title: 'Apa anda yakin??',
                     text: 'Setelah dihapus, Anda tidak akan dapat memulihkan data ini!',
@@ -356,13 +386,17 @@
                     dangerMode: true,
                 }).then((result) => {
                     if (!result.value) {
-                        this.$http.delete(uri).then(response => {
+                        this.load = true
+                        this.$http.post(uri, this.user).then(response => {
                             this.$swal({
                             title: response.data.message,
-                            icon: 'success'})
-                            this.setDeletedBy(deleteId);
-                            this.readData();
-                        }).catch(error => {
+                            icon: 'success',
+                            timer: 1500})
+                            this.load = false;
+                            this.close();
+                            this.readData(); //refresh data ini 
+                            this.resetForm();
+                }).catch(error => {
                         this.errors = error
                         this.$swal({
                             title: 'Gagal menghapus data!',
@@ -373,6 +407,22 @@
                     }
                 })
             },
+            // setDeletedBy(deleteId) {
+            //     this.user.append('deleted_by', localStorage.getItem('username'));
+            //     console.log(this.form);
+
+            //     var uri = this.$apiUrl + '/customer/by/' + deleteId;
+            //     this.load = true
+            //     this.$http.post(uri, this.user).then(response => {
+            //         this.load = false;
+            //         this.close();
+            //         this.readData(); //refresh data ini 
+            //         this.resetForm();
+            //     }).catch(error => {
+            //         this.errors = error
+            //         this.load = false;
+            //     })
+            // },
             setForm() {
                 if (this.typeInput === 'Tambah') {
                     this.createData()
@@ -397,9 +447,13 @@
                 const [month, day, year] = date.split('/')
                 return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
             },
+            setRole() {
+                this.role = localStorage.getItem('role');
+            },
         },
         mounted() {
             this.readData();
+            this.setRole();
         },
     }
 </script>

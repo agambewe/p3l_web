@@ -1,12 +1,13 @@
 <template>
-<div class="grey lighten-1">
-    <v-container>
+<div class="blue-grey lighten-5 full-height">
+    <v-container fill-height>
         <v-layout row class="text-xs-center"> 
             <v-row>
-                <v-card height="500px"></v-card>
+                <v-card height="300px"></v-card>
                 <v-flex md4 align="center" justify="center" style="backgroundColor:#4E5862;">
-                    <v-container style="position: relative;top: 15%;left: 0; right:0" class="text-xs-center">
-                        <v-card class="pl-4 pr-4 pb-1" flat>
+                    <v-container id="bungkus" class="text-xs-center">
+                        <img src="../assets/logo.png" id="gambar">
+                        <v-card class="pl-5 pr-5 pb-1" flat>
                             <v-card-title primary-title>
                                 <h4>Login</h4>
                             </v-card-title>
@@ -35,6 +36,30 @@
     </v-container>
 </div>
 </template>
+
+<style scoped>
+/* html, body {
+    height: 100%;
+} */
+
+.full-height {
+    height: 100%;
+}
+
+#bungkus{
+    /* position: relative; */
+    top: 15%;
+    left: 0; 
+    right:0;
+}
+
+#gambar{
+    width: 100%;
+    height: auto;
+    opacity: 0.5;
+    text-align: center;
+}
+</style> scoped>
 
 <script>
 import {

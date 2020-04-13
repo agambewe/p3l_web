@@ -50,13 +50,36 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogDetail" max-width="528px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline text-md-center">Detail Data {{ this.detail.nama }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <tbody>
+                                    <ul>
+                                        <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah }}</ul>
+                                    </ul>
+                                </tbody>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="layanan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="layanan" :sort-by="'updated_at'" :sort-desc="true" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td >
                                 <div class="flex">
+                                    <v-btn icon color="blue lighten-2" @click="readDetail(item)">
+                                        <v-icon>mdi-arrow-down</v-icon>
+                                    </v-btn>  
                                     <v-btn icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
@@ -76,12 +99,12 @@
                                 </v-select>
                             </td>
                             <td>{{ item.harga }}</td>
-                            <td>{{ item.created_at}}</td>
-                            <td>{{ item.updated_at }}</td>
+                            <!-- <td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td> -->
                         </tr>
                     </tbody>
                     <tbody v-else>
-                        <td :colspan="headers.length" class="text-center">Data masih kosong.</td>
+                        <td :colspan="headers.length" class="text-center">Data tidak ditemukan/ masih kosong.</td>
                     </tbody>
                 </template>
             </v-data-table>
@@ -96,6 +119,13 @@
     table td + td { border-left:1px solid #dddddd; }
     tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 0, 0, .05);
+    }
+    .v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
     }
     .flex {
         display: -webkit-box;
@@ -119,13 +149,16 @@
             return {
                 load: false,
                 dialog: false,
+                dialogDetail: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
                     {
                         text: 'Aksi',
                         value: null,
-                        sortable: false
+                        sortable: false,
+                        align: 'center',
+                        width: 150
                     },
                     {
                         text: 'Nama',
@@ -139,14 +172,14 @@
                         text: 'Harga',
                         value: 'harga'
                     },
-                    {
-                        text: 'Dibuat pada',
-                        value: 'created_at'
-                    },
-                    {
-                        text: 'Diubah pada',
-                        value: 'updated_at'
-                    },
+                    // {
+                    //     text: 'Dibuat pada',
+                    //     value: 'created_at'
+                    // },
+                    // {
+                    //     text: 'Diubah pada',
+                    //     value: 'updated_at'
+                    // },
                 ],
                 layanan: [],
                 ukuranHewan: [],
@@ -154,6 +187,11 @@
                     id_ukuran: '',
                     nama: '',
                     harga: ''
+                },
+                detail: {
+                    nama: '',
+                    diubah: '',
+                    dibuat: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -172,6 +210,12 @@
             },
             clear() {
                 this.resetForm();
+            },
+            readDetail(item) {
+                this.dialogDetail = true
+                this.detail.nama = item.nama
+                this.detail.dibuat = item.created_at
+                this.detail.diubah = item.updated_at
             },
             readDataUkuranHewan() {
                 var uri = this.$apiUrl + '/ukuran-hewan/'
@@ -276,7 +320,8 @@
                         this.$http.delete(uri).then(response => {
                             this.$swal({
                             title: response.data.message,
-                            icon: 'success'})
+                            icon: 'success',
+                            timer: 1500})
                             this.readData();
                         }).catch(error => {
                         this.errors = error

@@ -130,6 +130,14 @@ tbody tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, .05);
 }
 
+.v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
+    }
+    
 .flex {
     display: -webkit-box;
     display: -moz-box;

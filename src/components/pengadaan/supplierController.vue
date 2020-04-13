@@ -81,6 +81,13 @@
         background-color: rgba(0, 0, 0, .05);
     }
 
+    .v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
+    }
     .v-select__selections {
         max-width: 100px;
         border: none;
@@ -262,7 +269,8 @@
                         this.$http.delete(uri).then(response => {
                             this.$swal({
                             title: response.data.message,
-                            icon: 'success'})
+                            icon: 'success',
+                            timer: 1500})
                             this.readData();
                         }).catch(error => {
                         this.errors = error

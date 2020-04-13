@@ -57,12 +57,12 @@ export default {
                     },
                 ],
             },
-            {
-                title: 'Transaksi',
-                icon: 'mdi-store',
-                items: [
-                ],
-            },
+            // {
+            //     title: 'Transaksi',
+            //     icon: 'mdi-store',
+            //     items: [
+            //     ],
+            // },
             {
                 title: 'Laporan',
                 icon: 'mdi-file-document',
@@ -84,14 +84,20 @@ export default {
                         title: 'Hewan',
                         path: '/hewan',
                     }, 
-                    { 
-                        title: 'Produk', 
-                        path: '/produk',
-                    }, 
-                    { 
-                        title: 'Layanan', 
-                        path: '/layanan',
-                    },
+                    // { 
+                    //     title: 'Produk', 
+                    //     path: '/produk',
+                    // }, 
+                    // { 
+                    //     title: 'Layanan', 
+                    //     path: '/layanan',
+                    // },
+                ],
+            },
+            {
+                title: 'Transaksi',
+                icon: 'mdi-store',
+                items: [
                 ],
             },
             // {

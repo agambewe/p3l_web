@@ -84,17 +84,42 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogDetail" max-width="528px">
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline text-md-center">Detail Data {{ this.detail.nama }}</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <tbody>
+                                    <ul>
+                                        <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                        <ul># <strong>Dibuat oleh : </strong>{{ this.detail.dibuatoleh }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah }}</ul>
+                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh }}</ul>
+                                    </ul>
+                                </tbody>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="hewan" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="hewan" :sort-by="'updated_at'" :sort-desc="true" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td >
-                                <div class="flex">
-                                    <v-btn icon color="amber accent-3" @click="editHandler(item)">
+                                <div class="text-center">
+                                    <v-btn icon color="blue lighten-2" @click="readDetail(item)">
+                                        <v-icon>mdi-arrow-down</v-icon>
+                                    </v-btn>    
+                                    <v-btn v-if="role!='OWNER'" icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
-                                    <v-btn icon color="red accent-2" @click="setDeletedBy(item.id)">
+                                    <v-btn v-if="role!='OWNER'" icon color="red accent-2" @click="setDeletedBy(item.id)">
                                         <v-icon>mdi-delete-empty</v-icon>
                                     </v-btn>
                                 </div>
@@ -119,19 +144,19 @@
                                 </v-autocomplete>
                             </td>
                             <td>{{ item.tanggal_lahir }}</td>
-                            <td>{{ item.created_by}}</td>
+                            <!-- <td>{{ item.created_by}}</td>
                             <td v-if="item.updated_by==NULL">
                                 -
                             </td>
                             <td v-else>
                                 {{ item.updated_by }}
-                            </td>
-                            <td>{{ item.created_at}}</td>
-                            <td>{{ item.updated_at }}</td>
+                            </td> -->
+                            <!-- <td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td> -->
                         </tr>
                     </tbody>
                     <tbody v-else>
-                        <td :colspan="headers.length" class="text-center">Data masih kosong.</td>
+                        <td :colspan="headers.length" class="text-center">Data tidak ditemukan/ masih kosong.</td>
                     </tbody>
                 </template>
             </v-data-table>
@@ -146,6 +171,14 @@
     table td + td { border-left:1px solid #dddddd; }
     tbody tr:nth-of-type(odd) {
         background-color: rgba(0, 0, 0, .05);
+    }
+    
+    .v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
     }
 
     .v-select__selections {
@@ -168,13 +201,17 @@
             return {
                 load: false,
                 dialog: false,
+                dialogDetail: false,
                 typeInput: 'Tambah',
+                role: '',
                 keyword: '',
                 headers: [
                     {
                         text: 'Aksi',
                         value: null,
-                        sortable: false
+                        sortable: false,
+                        align: 'center',
+                        width: 150
                     },
                     {
                         text: 'Nama',
@@ -192,22 +229,22 @@
                         text: 'Tanggal Lahir',
                         value: 'tanggal_lahir'
                     },
-                    {
-                        text: 'Dibuat oleh',
-                        value: 'created_by'
-                    },
-                    {
-                        text: 'Diubah oleh',
-                        value: 'updated_by'
-                    },
-                    {
-                        text: 'Dibuat pada',
-                        value: 'created_at'
-                    },
-                    {
-                        text: 'Diubah pada',
-                        value: 'updated_at'
-                    }
+                    // {
+                    //     text: 'Dibuat oleh',
+                    //     value: 'created_by'
+                    // },
+                    // {
+                    //     text: 'Diubah oleh',
+                    //     value: 'updated_by'
+                    // },
+                    // {
+                    //     text: 'Dibuat pada',
+                    //     value: 'created_at'
+                    // },
+                    // {
+                    //     text: 'Diubah pada',
+                    //     value: 'updated_at'
+                    // }
                 ],
                 hewan: [],
                 jenisHewan: [],
@@ -220,6 +257,13 @@
                     created_by: '',
                     updated_by: '',
                     delete_by: '',
+                },
+                detail: {
+                    nama: '',
+                    diubah: '',
+                    diubaholeh: '',
+                    dibuat: '',
+                    dibuatoleh: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -254,6 +298,14 @@
             },
             clear() {
                 this.resetForm();
+            },
+            readDetail(item) {
+                this.dialogDetail = true
+                this.detail.nama = item.nama
+                this.detail.dibuat = item.created_at
+                this.detail.dibuatoleh = item.created_by
+                this.detail.diubah = item.updated_at
+                this.detail.diubaholeh = item.updated_by
             },
             readDataJenisHewan() {
                 var uri = this.$apiUrl + '/jenis-hewan/'
@@ -377,7 +429,8 @@
                         this.$http.post(uri, this.user).then(response => {
                             this.$swal({
                             title: response.data.message,
-                            icon: 'success'})
+                            icon: 'success',
+                            timer: 1500})
                             this.load = false;
                             this.close();
                             this.readData(); //refresh data ini 
@@ -460,11 +513,15 @@
                 const [month, day, year] = date.split('/')
                 return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
             },
+            setRole() {
+                this.role = localStorage.getItem('role');
+            },
         },
         mounted() {
             this.readData();
             this.readDataJenisHewan();
             this.readDataCustomer();
+            this.setRole();
         },
     }
 </script>

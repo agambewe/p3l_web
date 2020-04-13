@@ -12,7 +12,7 @@
                     <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
                 </v-flex>
             </v-layout>
-            <v-data-table :headers="headers" :items="pegawai" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items="pegawai" :sort-by="'deleted_at'" :sort-desc="true" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
@@ -50,6 +50,13 @@ table td + td { border-left:1px solid #dddddd; }
 tbody tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, .05);
 }
+.v-data-table
+    /deep/
+    tbody
+    /deep/
+    tr:hover:not(.v-data-table__expanded__content) {
+        background: #8797a8 !important;
+    }
 </style>
 
 <script>
