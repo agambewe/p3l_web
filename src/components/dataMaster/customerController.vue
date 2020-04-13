@@ -40,8 +40,8 @@
                                             <template v-slot:activator="{ on }">
                                             <v-text-field
                                                 v-model="computedDateFormatted"
-                                                label="Tanggal"
-                                                hint="MM/DD/YYYY format"
+                                                label="Tanggal Lahir"
+                                                hint="YYYY/MM/DD"
                                                 persistent-hint
                                                 readonly
                                                 v-on="on"

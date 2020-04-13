@@ -80,7 +80,7 @@
                                             <v-text-field v-else v-show="false" v-model="form.password" type="password" label="Password"></v-text-field>
                                     </v-col>
                                     <v-col v-else cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.password" label="password" type="password"></v-text-field>
+                                        <v-text-field v-model="form.password" label="Password" type="password"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
