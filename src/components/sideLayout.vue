@@ -71,7 +71,7 @@
         <v-app-bar dark app fixed height="75px" color="#4E5862"> 
             <!-- :src="bg" -->
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> 
-            <img src="../assets/logo.png" style="height:65px;width:90px"> 
+            <img src="../assets/logo.png" style="opacity:0.6;height:65px;width:90px"> 
             <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Couvee Pet Shop </v-toolbar-title>
             <VSpacer /> 
             <v-toolbar-items>
