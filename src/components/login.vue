@@ -3,6 +3,9 @@
     <v-container fill-height>
         <v-layout row class="text-xs-center"> 
             <v-row>
+                <v-flex md7>
+                        <img src="../assets/background.png" id="bekgron">
+                </v-flex>
                 <v-card height="300px"></v-card>
                 <v-flex md4 align="center" justify="center" style="backgroundColor:#4E5862;">
                     <v-container id="bungkus" class="text-xs-center">
@@ -31,6 +34,7 @@
                         </v-card>
                     </v-container>
                 </v-flex>
+                <v-card height="300px"></v-card>
             </v-row>
         </v-layout>
     </v-container>
@@ -58,6 +62,13 @@
     height: auto;
     opacity: 0.5;
     text-align: center;
+}
+
+#bekgron{
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    /* text-align: center; */
 }
 </style> scoped>
 
