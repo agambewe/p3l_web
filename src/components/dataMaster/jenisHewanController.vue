@@ -21,11 +21,17 @@
                         </v-card-title>
                         <v-card-text>
                             <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="form.nama" label="Nama Jenis" autofocus required :rules="[() => form.nama.length > 0 || 'Nama Jenis tidak boleh kosong']"></v-text-field>
-                                    </v-col>
-                                </v-row>
+                                <ValidationObserver ref="observer" v-slot="{ }">
+                                    <v-form>
+                                        <v-row>
+                                            <ValidationProvider v-slot="{ errors }" name="Nama Jenis" rules="required">
+                                                <v-col cols="12" sm="12" md="12">
+                                                    <v-text-field v-model="form.nama" label="Nama Jenis" :error-messages="errors" required></v-text-field>
+                                                </v-col>
+                                            </ValidationProvider>
+                                        </v-row>
+                                    </v-form>
+                                </ValidationObserver>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
@@ -114,7 +120,19 @@
 </style>
 
 <script>
+    import { required, max } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
     export default {
+        components: {
+            ValidationProvider,
+            ValidationObserver,
+        },
         data() {
             return {
                 load: false,
@@ -163,9 +181,13 @@
             },
         },
         methods: {
+            validate () {
+                this.$refs.form.validate()
+            },
             close() {
                 this.dialog = false
                 this.typeInput = 'Tambah';
+                this.resetForm();
             },
             clear() {
                 this.resetForm();
@@ -288,18 +310,21 @@
                     }
                 })
             },
-            setForm() {
-                if(!this.form.nama) return true
-                if (this.typeInput === 'Tambah') {
-                    this.createData()
-                } else {
-                    this.updateData()
+            async setForm() {
+                const isValid = await this.$refs.observer.validate();
+                if(isValid){
+                    if (this.typeInput === 'Tambah') {
+                        this.createData()
+                    } else {
+                        this.updateData()
+                    }
                 }
             },
             resetForm() {
                 this.form = {
                     nama: '',
                 }
+                this.$refs.observer.reset()
             },
         },
         mounted() {

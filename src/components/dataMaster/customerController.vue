@@ -24,39 +24,49 @@
                         </v-card-title>
                         <v-card-text>
                             <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.nama" label="Nama" required></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-menu
-                                            v-model="menu2"
-                                            :close-on-content-click="false"
-                                            transition="scale-transition"
-                                            offset-y
-                                            max-width="290px"
-                                            min-width="290px"
-                                        >
-                                            <template v-slot:activator="{ on }">
-                                            <v-text-field
-                                                v-model="computedDateFormatted"
-                                                label="Tanggal Lahir"
-                                                hint="YYYY/MM/DD"
-                                                persistent-hint
-                                                readonly
-                                                v-on="on"
-                                            ></v-text-field>
-                                            </template>
-                                            <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
-                                        </v-menu>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.telepon" label="Telepon" required></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-textarea v-model="form.alamat" label="Alamat" required></v-textarea>
-                                    </v-col>
-                                </v-row>
+                                <ValidationObserver ref="observer" v-slot="{ }">
+                                    <v-form>
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <ValidationProvider v-slot="{ errors }" name="Nama" rules="required">
+                                                    <v-text-field v-model="form.nama" label="Nama" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                                <v-col cols="12" sm="6" md="6">
+                                                    <v-menu
+                                                        v-model="menu2"
+                                                        :close-on-content-click="false"
+                                                        transition="scale-transition"
+                                                        offset-y
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                        <v-text-field
+                                                            v-model="computedDateFormatted"
+                                                            label="Tanggal Lahir"
+                                                            hint="YYYY/MM/DD"
+                                                            persistent-hint
+                                                            readonly
+                                                            v-on="on"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
+                                                    </v-menu>
+                                                </v-col>
+                                            <v-col cols="12" sm="6" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="No Telepon" rules="required">
+                                                    <v-text-field v-model="form.telepon" label="No Telepon" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="Alamat" rules="required">
+                                                    <v-textarea v-model="form.alamat" label="Alamat" :error-messages="errors" required></v-textarea>
+                                                </ValidationProvider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-form>
+                                </ValidationObserver>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
@@ -177,6 +187,10 @@
     })
 
     export default {
+        components: {
+            ValidationProvider,
+            ValidationObserver,
+        },
         data() {
             return {
                 load: false,
@@ -423,17 +437,24 @@
             //         this.load = false;
             //     })
             // },
-            setForm() {
-                if (this.typeInput === 'Tambah') {
-                    this.createData()
-                } else {
-                    this.updateData()
+            async setForm() {
+                const isValid = await this.$refs.observer.validate();
+                if(isValid){
+                    if (this.typeInput === 'Tambah') {
+                        this.createData()
+                    } else {
+                        this.updateData()
+                    }
                 }
             },
             resetForm() {
-                this.form = {
+                this.form= {
                     nama: '',
+                    alamat: '',
+                    tanggal_lahir: '',
+                    telepon: ''
                 }
+                this.$refs.observer.reset()
             },
             formatDate (date) {
                 if (!date) return null

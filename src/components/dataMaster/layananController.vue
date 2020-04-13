@@ -135,7 +135,8 @@
         display: flex;
     }
     .v-select__selections {
-        max-width: 50px;
+        max-width: 150px;
+        min-width: 100px;
         border: none;
     }
     .v-select .dropdown-toggle {

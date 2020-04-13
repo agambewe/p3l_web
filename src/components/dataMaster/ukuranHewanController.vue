@@ -115,9 +115,9 @@
         display: -webkit-flex;
         display: flex;
     }
-    .v-select__selections {
+    /* .v-select__selections {
         max-width: 50px
-    }
+    } */
 </style>
 
 <script>

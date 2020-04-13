@@ -28,61 +28,80 @@
                         </v-card-title>
                         <v-card-text>
                             <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.nama" label="Nama"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.username" label="Username"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-autocomplete
-                                            v-model="form.role"
-                                            :items="role_data"
-                                            item-value="text"
-                                            label="Role"
-                                            required
-                                            hide-selected>
-                                        </v-autocomplete>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-menu
-                                            v-model="menu2"
-                                            :close-on-content-click="false"
-                                            transition="scale-transition"
-                                            offset-y
-                                            max-width="290px"
-                                            min-width="290px"
-                                        >
-                                            <template v-slot:activator="{ on }">
-                                            <v-text-field
-                                                v-model="computedDateFormatted"
-                                                label="Tanggal Lahir"
-                                                hint="YYYY/MM/DD"
-                                                persistent-hint
-                                                readonly
-                                                v-on="on"
-                                            ></v-text-field>
-                                            </template>
-                                            <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
-                                        </v-menu>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.telepon" label="Telepon"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-textarea v-model="form.alamat" label="Alamat"></v-textarea>
-                                    </v-col>
-                                    <v-col v-if="this.typeInput === 'Ubah'" cols="12" sm="6" md="12">
-                                    <label>Ubah password? </label>
-                                        <input type="checkbox" id="checkbox" v-model="checked"><br><br>
-                                            <v-text-field v-if="checked" v-model="form.password" type="password" label="Password Baru"></v-text-field>
-                                            <v-text-field v-else v-show="false" v-model="form.password" type="password" label="Password"></v-text-field>
-                                    </v-col>
-                                    <v-col v-else cols="12" sm="6" md="12">
-                                        <v-text-field v-model="form.password" label="Password" type="password"></v-text-field>
-                                    </v-col>
-                                </v-row>
+                                <ValidationObserver ref="observer" v-slot="{ }">
+                                    <v-form>
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <ValidationProvider v-slot="{ errors }" name="Nama" rules="required">
+                                                    <v-text-field v-model="form.nama" label="Nama" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <ValidationProvider v-slot="{ errors }" name="Username" rules="required">
+                                                    <v-text-field v-model="form.username" label="Username" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <ValidationProvider v-slot="{ errors }" name="Role" rules="required">
+                                                    <v-autocomplete
+                                                        v-model="form.role"
+                                                        :items="role_data"
+                                                        :error-messages="errors"
+                                                        item-value="text"
+                                                        label="Role"
+                                                        required
+                                                        hide-selected>
+                                                    </v-autocomplete>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-menu
+                                                    v-model="menu2"
+                                                    :close-on-content-click="false"
+                                                    transition="scale-transition"
+                                                    offset-y
+                                                    max-width="290px"
+                                                    min-width="290px"
+                                                >
+                                                    <template v-slot:activator="{ on }">
+                                                    <v-text-field
+                                                        v-model="computedDateFormatted"
+                                                        label="Tanggal Lahir"
+                                                        hint="YYYY/MM/DD"
+                                                        persistent-hint
+                                                        readonly
+                                                        v-on="on"
+                                                    ></v-text-field>
+                                                    </template>
+                                                    <v-date-picker v-model="date" no-title @input="menu2 = false"></v-date-picker>
+                                                </v-menu>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="No Telepon" rules="required|integer">
+                                                    <v-text-field v-model="form.telepon" label="No Telepon" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="Alamat" rules="required">
+                                                    <v-textarea v-model="form.alamat" label="Alamat" :error-messages="errors" required></v-textarea>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col v-if="typeInput === 'Ubah'" cols="12" sm="12" md="12">
+                                            <label>Ubah password? </label>
+                                                <input type="checkbox" id="checkbox" v-model="checked"><br><br>
+                                                    <ValidationProvider v-if="checked" v-slot="{ errors }" name="Password" rules="required">
+                                                        <v-text-field v-model="form.password" type="password" label="Password Baru" :error-messages="errors" required></v-text-field>
+                                                    </ValidationProvider>
+                                                    <v-text-field v-else v-show="false" v-model="form.password" type="password" label="Password"></v-text-field>
+                                            </v-col>
+                                            <v-col v-else cols="12" sm="12" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="Password" rules="required">
+                                                    <v-text-field v-model="form.password" type="password" label="Password" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-form>
+                                </ValidationObserver>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
@@ -179,7 +198,23 @@
 </style>
 
 <script>
+    import { required, integer } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
+    extend('integer', {
+        ...integer,
+        message: '{_field_} harus berupa angka.',
+    })
     export default {
+        components: {
+            ValidationProvider,
+            ValidationObserver,
+        },
         data() {
             return {
                 load: false,
@@ -244,7 +279,7 @@
                     alamat: '',
                     tanggal_lahir: '',
                     telepon: '',
-                    role: '',
+                    role: null,
                     password: '',
                 },
                 detail: {
@@ -338,7 +373,6 @@
                 })
             },
             editHandler(item) {
-                console.log(this.typeInput);
                 this.typeInput = 'Ubah';
                 this.dialog = true;
                 this.form.nama = item.nama;
@@ -348,7 +382,6 @@
                 this.form.telepon = item.telepon;
                 this.form.role = item.role;
                 this.updatedId = item.id;
-                console.log(this.typeInput);
             },
             updateData() {
                 this.user.append('nama', this.form.nama);
@@ -422,11 +455,14 @@
                     }
                 })
             },
-            setForm() {
-                if (this.typeInput === 'Tambah') {
-                    this.createData()
-                } else {
-                    this.updateData()
+            async setForm() {
+                const isValid = await this.$refs.observer.validate();
+                if(isValid){
+                    if (this.typeInput === 'Tambah') {
+                        this.createData()
+                    } else {
+                        this.updateData()
+                    }
                 }
             },
             resetForm() {
@@ -436,9 +472,11 @@
                     alamat: '',
                     tanggal_lahir: '',
                     telepon: '',
-                    role: '',
+                    role: null,
                     password: '',
                 }
+                this.checked = false
+                this.$refs.observer.reset()
             },
             formatDate (date) {
                 if (!date) return null
