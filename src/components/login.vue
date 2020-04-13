@@ -4,7 +4,8 @@
         <v-layout row class="text-xs-center"> 
             <v-row>
                 <v-flex md7>
-                        <img src="../assets/background.png" id="bekgron">
+                    <img src="../assets/background.png" id="bekgron">
+                    <div id="tulisan">Welcome to Kouvee Pet Shop..</div>
                 </v-flex>
                 <v-card height="300px"></v-card>
                 <v-flex md4 align="center" justify="center" style="backgroundColor:#4E5862;">
@@ -12,7 +13,7 @@
                         <img src="../assets/logo.png" id="gambar">
                         <v-card class="pl-5 pr-5 pb-1" flat>
                             <v-card-title primary-title>
-                                <h4>Login</h4>
+                                <h4 id="titel">Login</h4>
                             </v-card-title>
                             <!-- <ValidationObserver ref="observer" v-slot="{ validate, reset }"> -->
                             <ValidationObserver ref="observer" v-slot="{  }">
@@ -42,34 +43,51 @@
 </template>
 
 <style scoped>
-/* html, body {
-    height: 100%;
-} */
+    @import url("https://fonts.googleapis.com/css?family=Amatic+SC");
+    @import url("https://fonts.googleapis.com/css?family=Aclonica");
+    /* html, body {
+        height: 100%;
+    } */
 
-.full-height {
-    height: 100%;
-}
+    .full-height {
+        height: 100%;
+    }
 
-#bungkus{
-    /* position: relative; */
-    top: 15%;
-    left: 0; 
-    right:0;
-}
+    #bungkus{
+        /* position: relative; */
+        top: 15%;
+        left: 0; 
+        right:0;
+    }
 
-#gambar{
-    width: 100%;
-    height: auto;
-    opacity: 0.5;
-    text-align: center;
-}
+    #gambar{
+        width: 100%;
+        height: auto;
+        opacity: 0.5;
+        text-align: center;
+    }
 
-#bekgron{
-    width: 100%;
-    height: 100%;
-    opacity: 0.7;
-    /* text-align: center; */
-}
+    #bekgron{
+        width: 100%;
+        height: 100%;
+        opacity: 0.7;
+        /* text-align: center; */
+    }
+
+    #tulisan {
+        position: absolute;
+        right: -32%;
+        top: 25%;
+        width: 100%;
+        text-align: left;
+        font-size: 30px;
+        font-family: 'Amatic SC'
+    }
+
+    #titel {
+        opacity: 0.8;
+        font-family: 'Aclonica'
+    }
 </style> scoped>
 
 <script>
