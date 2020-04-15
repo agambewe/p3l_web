@@ -349,7 +349,7 @@ export default {
             })
         },
         updateData(id) {
-            var uri = this.$apiUrl + '/order-restock/' + id;
+            var uri = this.$apiUrl + '/order-layanan/' + id;
             this.load = true
             this.$http.post(uri).then(response => {
                 this.$swal({
