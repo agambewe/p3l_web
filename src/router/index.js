@@ -11,6 +11,9 @@ function loadSampah(view) {
 function loadRest(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/pengadaan/${view}.vue`) 
 } 
+function loadTrans(view) {
+    return () => import(/* webpackChunkName: "view-[request]" */ `../components/transaksi/${view}.vue`) 
+} 
 const routes = [ 
     { name: 'login', path: '/login', component: loginLayout },
     { name: 'dashboardLayout', path: '/', component: SideLayout, 
@@ -52,6 +55,9 @@ const routes = [
             { name: 'SupplierController', path: '/supplier', component: loadRest('supplierController') },
             { name: 'PengadaanController', path: '/pengadaan', component: loadRest('pengadaanController') },
             { name: 'DetailController', path: '/detail-restock', component: loadRest('detailController') },
+
+            //Transaksi
+            { name: 'TlayananController', path: '/Tlayanan', component: loadTrans('TlayananController') },
         ],
         beforeEnter: (to, from, next) => {
             if(localStorage.getItem('username')) {

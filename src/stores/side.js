@@ -74,7 +74,6 @@ export default {
             {
                 title: 'Data Master',
                 icon: 'mdi-database',
-                active: true,
                 items: [
                     { 
                         title: 'Customer', 
@@ -97,7 +96,12 @@ export default {
             {
                 title: 'Transaksi',
                 icon: 'mdi-store',
+                active: true,
                 items: [
+                    { 
+                        title: 'Layanan', 
+                        path: '/Tlayanan',
+                    },
                 ],
             },
             // {

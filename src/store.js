@@ -5,11 +5,13 @@ Vue.use(Vuex);
 
 import side from './stores/side';
 import pegawai from './stores/pegawai';
+import transaksi from './stores/transaksi';
 
 const vuex_store = new Vuex.Store({
     modules: {
         side,
-        pegawai
+        pegawai,
+        transaksi
     },
 });
 
