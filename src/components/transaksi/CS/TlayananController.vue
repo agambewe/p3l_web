@@ -346,26 +346,43 @@ export default {
         updateData(id) {
             var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
             this.load = true
-            this.$http.post(uri).then(response => {
-                this.$swal({
-                    icon: 'success',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                this.load = false;
-                this.close();
-                this.readData(); //refresh data ini 
-                this.resetForm();
-            }).catch(error => {
-                this.errors = error
-                this.$swal({
-                    icon: 'error',
-                    title: 'Gagal mengubah data!',
-                    text: 'Coba lagi ..',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+            this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Apakah layanan ini benar benar sudah selesai??',
+                icon: 'warning',
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.$http.post(uri).then(response => {
+                        this.$swal({
+                            icon: 'success',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                        this.close();
+                        this.readData(); //refresh data ini 
+                        this.resetForm();
+                    }).catch(error => {
+                        this.errors = error
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Gagal mengubah data!',
+                            text: 'Coba lagi ..',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                    })
+                }
                 this.load = false;
             })
         },

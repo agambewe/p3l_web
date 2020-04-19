@@ -6,7 +6,7 @@
             <v-dialog v-model="dialog" persistent max-width="300px">
                 <v-card>
                     <v-card-title>
-                        <span class="headline text-md-center">Masukkan diskon</span>
+                        <span class="headline text-md-center">{{ formTitle }} diskon</span>
                     </v-card-title>
                     <v-card-text>
                         <v-container>
@@ -20,7 +20,7 @@
                     <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
-                            <v-btn color="green lighten-1" text @click="updateData()">Simpan</v-btn>
+                            <v-btn v-if="typeInput=='Masukkan'" color="green lighten-1" text @click="updateData()">Simpan</v-btn>
                         </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -62,7 +62,7 @@
                             <v-btn x-small color="red lighten-2" v-if="item.status_bayar==0" @click="inputDiskon(item.id)">
                                 Belum dibayar
                             </v-btn>
-                            <v-btn x-small color="green lighten-2" v-else>
+                            <v-btn x-small color="green lighten-2" v-else @click="showDiskon(item.diskon)">
                                 Sudah dibayar
                             </v-btn>
                         </td>
@@ -132,7 +132,7 @@ export default {
             load: false,
             dialog: false,
             dialogDetail: false,
-            typeInput: 'Tambah',
+            typeInput: 'Masukkan',
             keyword: '',
             headers: [{
                     text: 'Detail',
@@ -179,7 +179,8 @@ export default {
             changeId: "transaksi/changeId",
         }),
         close() {
-            this.dialog = false
+            this.dialog = false,
+            this.typeInput = 'Masukkan';
         },
         clear() {
             this.resetForm();
@@ -212,36 +213,58 @@ export default {
             this.changeId(item.id_transaksi);
             this.dialogDetail = true
         },
+        showDiskon(id){
+            this.dialog=true;
+            this.typeInput = 'Lihat';
+            this.form.diskon = id;
+        },
         inputDiskon(id){
             this.dialog=true;
             this.form.id = id;
         },
         updateData() {
-            this.user.append('diskon', this.form.diskon);
-            this.user.append('kasir', this.getUsername());
-
-            var uri = this.$apiUrl + '/bayar-layanan/bayar-layanan/' + this.form.id;
             this.load = true
-            this.$http.post(uri, this.user).then(response => {
-                this.$swal({
-                    icon: 'success',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-                this.load = false;
-                this.close();
-                this.readData(); //refresh data ini 
-                this.resetForm();
-            }).catch(error => {
-                this.errors = error
-                this.$swal({
-                    icon: 'error',
-                    title: 'Gagal mengubah data!',
-                    text: 'Coba lagi ..',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+            this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Yakin menyesesaikan pembayaran dengan diskon '+this.form.diskon+' ??',
+                icon: 'warning',
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.user.append('diskon', this.form.diskon);
+                    this.user.append('kasir', this.getUsername());
+
+                    var uri = this.$apiUrl + '/bayar-layanan/bayar-layanan/' + this.form.id;
+                    this.$http.post(uri, this.user).then(response => {
+                    this.$swal({
+                        icon: 'success',
+                        title: response.data.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    this.load = false;
+                    this.close();
+                    this.readData(); //refresh data ini 
+                    this.resetForm();
+                    }).catch(error => {
+                        this.errors = error
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Gagal mengubah data!',
+                            text: 'Coba lagi ..',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                    })
+                }
                 this.load = false;
             })
         },
