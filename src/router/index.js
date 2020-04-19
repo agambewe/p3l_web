@@ -11,8 +11,11 @@ function loadSampah(view) {
 function loadRest(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/pengadaan/${view}.vue`) 
 } 
-function loadTrans(view) {
-    return () => import(/* webpackChunkName: "view-[request]" */ `../components/transaksi/${view}.vue`) 
+function loadTransCS(view) {
+    return () => import(/* webpackChunkName: "view-[request]" */ `../components/transaksi/CS/${view}.vue`) 
+} 
+function loadTransKASIR(view) {
+    return () => import(/* webpackChunkName: "view-[request]" */ `../components/transaksi/KASIR/${view}.vue`) 
 } 
 const routes = [ 
     { name: 'login', path: '/login', component: loginLayout },
@@ -56,8 +59,11 @@ const routes = [
             { name: 'PengadaanController', path: '/pengadaan', component: loadRest('pengadaanController') },
             { name: 'DetailController', path: '/detail-restock', component: loadRest('detailController') },
 
-            //Transaksi
-            { name: 'TlayananController', path: '/Tlayanan', component: loadTrans('TlayananController') },
+            //TransaksiCS
+            { name: 'TlayananControllerCS', path: '/TlayananC', component: loadTransCS('TlayananController') },
+            
+            //TransaksiKasir
+            { name: 'TlayananControllerKASIR', path: '/TlayananK', component: loadTransKASIR('TlayananController') },
         ],
         beforeEnter: (to, from, next) => {
             if(localStorage.getItem('username')) {

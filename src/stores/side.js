@@ -100,7 +100,7 @@ export default {
                 items: [
                     { 
                         title: 'Layanan', 
-                        path: '/Tlayanan',
+                        path: '/TlayananC',
                     },
                 ],
             },
@@ -115,7 +115,12 @@ export default {
             {
                 title: 'Transaksi',
                 icon: 'mdi-store',
+                active: true,
                 items: [
+                    { 
+                        title: 'Layanan', 
+                        path: '/TlayananK',
+                    },
                 ],
             },
         ],

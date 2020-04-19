@@ -282,10 +282,7 @@ export default {
             this.dialogDetail = true
         },
         createData() {
-            // this.formDetail.id_transaksi = this.lastIdPo;
-            // this.user.append('id_transaksi', this.formDetail.id_transaksi);
-            this.user.append('cs', this.setUsername());
-            // this.user.append('tanggal_transaksi', this.getTanggalSekarang());
+            this.user.append('cs', this.getUsername());
 
             var uri = this.$apiUrl + '/order-layanan/'
             this.load = true
@@ -296,12 +293,10 @@ export default {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                // this.formDetail.id_order_restock = response.data.id
-                this.createDataDetail(response.data.id);
-                // this.load = false;
+                this.createDataDetail(response.data.value);
                 this.close();
                 this.readData(); //mengambil data user 
-                this.resetForm();
+                // this.resetForm();
             }).catch(error => {
                 this.errors = error
                 this.$swal({
@@ -320,7 +315,7 @@ export default {
                 this.user.append('id_transaksi', id);
                 this.user.append('id_hewan[]', this.rows[i].id_hewan);
                 this.user.append('id_layanan[]', this.rows[i].id_layanan);
-                this.user.append('subtotal[]', this.rows[i].subtotal);                
+                this.user.append('subtotal[]', this.rows[i].subtotal);   
             }
             var uri = this.$apiUrl + '/detail-transaksi-layanan/'
             this.load = true
@@ -349,7 +344,7 @@ export default {
             })
         },
         updateData(id) {
-            var uri = this.$apiUrl + '/order-layanan/' + id;
+            var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
             this.load = true
             this.$http.post(uri).then(response => {
                 this.$swal({
@@ -380,13 +375,22 @@ export default {
             this.formDetail= {
                 cs: ''
             }
-            this.layanan.length = 0
-            this.hewanSiapa.length = 0
-            this.customers.length = 0
+            this.user.delete('id_hewan[]')
+            this.user.delete('id_layanan[]')
+            this.user.delete('subtotal[]')
+            // this.layanan.length = 0
+            // this.hewanSiapa.length = 0
+            // this.customers.length = 0
+            // for (var i = this.rows.length; i > 0; i--) {
+            //     this.rows[i].id_transaksi= ''
+            //     this.rows[i].id_hewan= ''
+            //     this.rows[i].id_layanan= '' 
+            //     this.rows[i].subtotal= ''
+            // }
             this.rows.length = 0
             this.rows= [
                 {
-                    'id_transaksi_layanan': '',
+                    'id_transaksi': '',
                     'id_hewan': '',
                     'id_layanan': '',
                     'subtotal': ''
@@ -394,10 +398,10 @@ export default {
             ]
             this.initData();
         },
-        setRole() {
+        getRole() {
             return localStorage.getItem('role');
         },
-        setUsername() {
+        getUsername() {
             return localStorage.getItem('username');
         },
         setSubtotal(index) {
