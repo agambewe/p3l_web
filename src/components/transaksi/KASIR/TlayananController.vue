@@ -135,9 +135,11 @@ export default {
             typeInput: 'Masukkan',
             keyword: '',
             headers: [{
-                    text: 'Detail',
+                    text: 'Aksi',
                     value: null,
-                    sortable: false
+                    sortable: false,
+                    align: 'center',
+                    width: 150
                 },
                 {
                     text: 'ID transaksi layanan',

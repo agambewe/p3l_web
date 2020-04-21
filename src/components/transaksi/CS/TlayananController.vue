@@ -34,22 +34,23 @@
                                         clearable>
                                     </v-autocomplete>
                                 </v-col>
+                                <v-col cols="6" md="12">
+                                    <v-autocomplete
+                                        v-model="id_hewan"
+                                        :items="hewanSiapa"
+                                        no-data-text="Customer ini belum punya hewan"
+                                        item-value="id"
+                                        item-text="nama"
+                                        label="Hewan"
+                                        required
+                                        hide-selected
+                                        clearable>
+                                    </v-autocomplete>
+                                </v-col>
                             </v-row>
                             <div v-for="(row, index) in rows" v-bind:key="index">
                                 <v-row>
-                                    <v-col cols="6" md="4">
-                                        <v-autocomplete
-                                            v-model="row.id_hewan"
-                                            :items="hewanSiapa"
-                                            item-value="id"
-                                            item-text="nama"
-                                            label="Hewan"
-                                            required
-                                            hide-selected
-                                            clearable>
-                                        </v-autocomplete>
-                                    </v-col>
-                                    <v-col cols="6" md="4">
+                                    <v-col cols="6" md="6">
                                         <v-autocomplete
                                             v-model="row.id_layanan"
                                             :items="layanan"
@@ -62,8 +63,8 @@
                                             @change="setSubtotal(index)">
                                         </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="6" md="3">
-                                        <v-text-field v-model="row.subtotal" label="Jumlah" required></v-text-field>
+                                    <v-col cols="6" md="5">
+                                        <v-text-field v-model="row.subtotal" label="Harga" readonly required></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="1">
                                         <v-btn icon color="amber darken-4" @click="deleteRow(index)">
@@ -107,6 +108,9 @@
                             <div class="flex">
                                 <v-btn icon color="amber accent-3" @click="readDetail(item)">
                                     <v-icon>mdi-arrow-down</v-icon>
+                                </v-btn>
+                                <v-btn icon color="red darken-4" @click="deleteData(item.id)">
+                                    <v-icon>mdi-window-close</v-icon>
                                 </v-btn>
                             </div>
                         </td>
@@ -188,9 +192,11 @@ export default {
             typeInput: 'Tambah',
             keyword: '',
             headers: [{
-                    text: 'Detail',
+                    text: 'Aksi',
                     value: null,
-                    sortable: false
+                    sortable: false,
+                    align: 'center',
+                    width: 150
                 },
                 {
                     text: 'ID transaksi layanan',
@@ -204,13 +210,13 @@ export default {
             transaksi: [],
             customers: [],
             customer: '',
+            id_hewan: '',
             hewan: [],
             hewanSiapa: [],
             layanan: [],
             rows: [
                 {
                     'id_transaksi_layanan': '',
-                    'id_hewan': '',
                     'id_layanan': '',
                     'subtotal': ''
                 }
@@ -238,7 +244,6 @@ export default {
             this.rows.push(
                 {
                     'id_transaksi_layanan': '',
-                    'id_hewan': '',
                     'id_layanan': '',
                     'subtotal': ''
                 }
@@ -313,7 +318,8 @@ export default {
         createDataDetail(id) {
             for (var i = 0; i < this.rows.length; i++) {
                 this.user.append('id_transaksi', id);
-                this.user.append('id_hewan[]', this.rows[i].id_hewan);
+                // this.user.append('id_hewan[]', this.rows[i].id_hewan);
+                this.user.append('id_hewan', this.id_hewan);
                 this.user.append('id_layanan[]', this.rows[i].id_layanan);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
             }
@@ -386,13 +392,50 @@ export default {
                 this.load = false;
             })
         },
+        deleteData(deleteId) {
+            //mengahapus data 
+            var uri = this.$apiUrl + '/order-layanan/' + deleteId;
+            
+            this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Batalkan layanan ini!',
+                icon: 'warning',
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                // reverseButtons: true,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.$http.delete(uri).then(response => {
+                        this.$swal({
+                        text: response.data.message,
+                        icon: 'success',
+                        timer: 1500})
+                        this.readData();
+                    }).catch(error => {
+                    this.errors = error
+                    this.$swal({
+                        title: 'Gagal menghapus data!',
+                        text: 'Coba lagi ..',
+                        icon: 'error',
+                        });
+                    })
+                }
+            })
+        },
         resetForm() {
             this.changeId('-')
             this.customer= ''
+            this.id_hewan= ''
             this.formDetail= {
                 cs: ''
             }
-            this.user.delete('id_hewan[]')
+            // this.user.delete('id_hewan[]')
             this.user.delete('id_layanan[]')
             this.user.delete('subtotal[]')
             // this.layanan.length = 0
@@ -408,7 +451,6 @@ export default {
             this.rows= [
                 {
                     'id_transaksi': '',
-                    'id_hewan': '',
                     'id_layanan': '',
                     'subtotal': ''
                 }
@@ -439,6 +481,7 @@ export default {
             var uri = this.$apiUrl + '/hewan/nya/'+this.customer;
                 this.$http.get(uri).then(response => {
                     this.hewanSiapa = response.data
+                    // console.log(response.data)
                 })
         },
         // transaksi: function () {
