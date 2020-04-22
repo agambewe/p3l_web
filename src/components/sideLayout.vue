@@ -11,7 +11,7 @@
         <!-- :src="bg" -->
             <v-list-item> 
                 <v-list-item-content> 
-                    <v-list-item-title class="title"> Couvee </v-list-item-title> 
+                    <v-list-item-title class="title"> Kouvee </v-list-item-title> 
                     <v-list-item-subtitle> shop </v-list-item-subtitle> 
                 </v-list-item-content> 
             </v-list-item> 
@@ -72,7 +72,7 @@
             <!-- :src="bg" -->
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> 
             <img src="../assets/logo.png" style="opacity:0.6;height:65px;width:90px"> 
-            <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Couvee Pet Shop </v-toolbar-title>
+            <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Kouvee Pet Shop </v-toolbar-title>
             <VSpacer /> 
             <v-toolbar-items>
                 <v-btn text router @click="dialog = true"><v-icon>mdi-face</v-icon></v-btn>

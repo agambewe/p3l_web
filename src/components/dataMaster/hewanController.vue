@@ -125,24 +125,8 @@
                                 </div>
                             </td>
                             <td>{{ item.nama }}</td>
-                            <td>
-                                <v-autocomplete
-                                    v-model="item.id_jenis"
-                                    :items="jenisHewan"
-                                    item-value="id"
-                                    item-text="nama"
-                                    readonly>
-                                </v-autocomplete>
-                            </td>
-                            <td>
-                                <v-autocomplete
-                                    v-model="item.id_customer" 
-                                    :items="customer"
-                                    item-value="id"
-                                    item-text="nama"
-                                    readonly>
-                                </v-autocomplete>
-                            </td>
+                            <td>{{ item.jenis_hewan.nama }}</td>
+                            <td>{{ item.customer.nama }}</td>
                             <td>{{ item.tanggal_lahir }}</td>
                             <!-- <td>{{ item.created_by}}</td>
                             <td v-if="item.updated_by==NULL">

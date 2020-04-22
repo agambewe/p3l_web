@@ -61,6 +61,7 @@ const routes = [
 
             //TransaksiCS
             { name: 'TlayananControllerCS', path: '/TlayananC', component: loadTransCS('TlayananController') },
+            { name: 'TprodukControllerCS', path: '/TprodukC', component: loadTransCS('TprodukController') },
             
             //TransaksiKasir
             { name: 'TlayananControllerKASIR', path: '/TlayananK', component: loadTransKASIR('TlayananController') },

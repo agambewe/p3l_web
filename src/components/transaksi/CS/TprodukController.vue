@@ -1,7 +1,7 @@
 <template>
 <v-container dark>
     <v-container grid-list-md mb-0>
-        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Transaksi Layanan</h1>
+        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Transaksi Produk</h1>
         <v-layout row wrap style="margin:10px">
             <v-dialog v-model="dialog" persistent max-width="1000px">
                 <template v-slot:activator="{ on }">
@@ -38,7 +38,7 @@
                                     <v-autocomplete
                                         v-model="id_hewan"
                                         :items="hewanSiapa"
-                                        no-data-text="Customer masih kosong/ belum punya hewan"
+                                        no-data-text="Customer ini belum punya hewan"
                                         item-value="id"
                                         item-text="nama"
                                         label="Hewan"
@@ -52,11 +52,11 @@
                                 <v-row>
                                     <v-col cols="6" md="6">
                                         <v-autocomplete
-                                            v-model="row.id_layanan"
-                                            :items="layanan"
+                                            v-model="row.id_produk"
+                                            :items="produk"
                                             item-value="id"
                                             item-text="nama"
-                                            label="Layanan"
+                                            label="Produk"
                                             required
                                             hide-selected
                                             clearable
@@ -121,8 +121,8 @@
                             {{ item.id_transaksi }}
                         </td>
                         <td>
-                            <v-btn x-small color="red lighten-2" @click="updateData(item.id)">
-                                Layanan Selesai
+                            <v-btn x-small color="red lighten-2" @click="updateAlert">
+                                Belum dibayar
                             </v-btn>
                         </td>
                     </tr>
@@ -181,7 +181,7 @@ tbody tr:nth-of-type(odd) {
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import Detail from "./DlayananController";
+import Detail from "./DprodukController";
 
 export default {
     components: {
@@ -202,12 +202,12 @@ export default {
                     width: 150
                 },
                 {
-                    text: 'ID transaksi layanan',
+                    text: 'ID transaksi produk',
                     value: 'id_transaksi'
                 },
                 {
-                    text: 'Status layanan',
-                    value: 'status_layanan'
+                    text: 'Status Bayar',
+                    value: 'status_bayar'
                 },
             ],
             transaksi: [],
@@ -216,11 +216,11 @@ export default {
             id_hewan: '',
             hewan: [],
             hewanSiapa: [],
-            layanan: [],
+            produk: [],
             rows: [
                 {
-                    'id_transaksi_layanan': '',
-                    'id_layanan': '',
+                    'id_transaksi': '',
+                    'id_produk': '',
                     'subtotal': ''
                 }
             ],
@@ -233,7 +233,7 @@ export default {
                 'id_hewan': '',
                 rows: [
                     {
-                        'id_layanan': '',
+                        'id_produk': '',
                         'subtotal': ''
                     }
                 ],
@@ -257,8 +257,8 @@ export default {
         addRow: function() {
             this.rows.push(
                 {
-                    'id_transaksi_layanan': '',
-                    'id_layanan': '',
+                    'id_transaksi': '',
+                    'id_produk': '',
                     'subtotal': ''
                 }
             );
@@ -284,14 +284,14 @@ export default {
                 this.hewan = response.data
             })
         },
-        readDataLayanan() {
-            var uri = this.$apiUrl + '/layanan/'
+        readDataProduk() {
+            var uri = this.$apiUrl + '/produk/'
             this.$http.get(uri).then(response => {
-                this.layanan = response.data
+                this.produk = response.data
             })
         },
         readData() {
-            var uri = this.$apiUrl + '/order-layanan/'
+            var uri = this.$apiUrl + '/order-produk/'
             this.$http.get(uri).then(response => {
                 this.transaksi = response.data
             })
@@ -303,7 +303,7 @@ export default {
         createData() {
             this.user.append('cs', this.getUsername());
 
-            var uri = this.$apiUrl + '/order-layanan/'
+            var uri = this.$apiUrl + '/order-produk/'
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.$swal({
@@ -334,10 +334,10 @@ export default {
                 this.user.append('id_transaksi', id);
                 // this.user.append('id_hewan[]', this.rows[i].id_hewan);
                 this.user.append('id_hewan', this.id_hewan);
-                this.user.append('id_layanan[]', this.rows[i].id_layanan);
+                this.user.append('id_produk[]', this.rows[i].id_produk);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
             }
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/'
+            var uri = this.$apiUrl + '/detail-transaksi-produk/'
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.$swal({
@@ -365,7 +365,7 @@ export default {
         },
         editHandler(item) {
             this.dialog = true;
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+item.id_transaksi
+            var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+item.id_transaksi
                 this.$http.get(uri).then(response => {
                     var det = response.data.value
                     this.editDetil.id_transaksi = det[0].id_transaksi
@@ -373,7 +373,7 @@ export default {
                     this.customer = det[0].id_customer
 
                     for (var i = 0; i < det.length; i++) {
-                        this.rows[i].id_layanan = det[i].id_layanan
+                        this.rows[i].id_produk = det[i].id_produk
                         this.rows[i].subtotal = det[i].subtotal
                         this.addRow()
                     }
@@ -416,52 +416,18 @@ export default {
                 this.load = false;
             })
         },
-        updateData(id) {
-            var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
-            this.load = true
+        updateAlert() {
             this.$swal({
-                title: 'Apa kamu yakin??',
-                text: 'Apakah layanan ini benar benar sudah selesai??',
                 icon: 'warning',
-                cancelButtonColor: '#FF5252',
-                confirmButtonColor: '#BDBDBD',
-                cancelButtonText: 'Oke!',
-                confirmButtonText: 'Batal',
-                showCancelButton: true,
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                dangerMode: true,
-            }).then((result) => {
-                if (!result.value) {
-                    this.$http.post(uri).then(response => {
-                        this.$swal({
-                            icon: 'success',
-                            title: response.data.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.load = false;
-                        this.close();
-                        this.readData(); //refresh data ini 
-                        this.resetForm();
-                    }).catch(error => {
-                        this.errors = error
-                        this.$swal({
-                            icon: 'error',
-                            title: 'Gagal mengubah data!',
-                            text: 'Coba lagi ..',
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        this.load = false;
-                    })
-                }
-                this.load = false;
+                title: 'Berhenti!',
+                text: 'Hak akses ditolak ..',
+                showConfirmButton: false,
+                timer: 2000
             })
         },
         deleteData(deleteId) {
             //mengahapus data 
-            var uri = this.$apiUrl + '/order-layanan/' + deleteId;
+            var uri = this.$apiUrl + '/order-produk/' + deleteId;
             
             this.$swal({
                 title: 'Apa kamu yakin??',
@@ -503,22 +469,13 @@ export default {
                 cs: ''
             }
             // this.user.delete('id_hewan[]')
-            this.user.delete('id_layanan[]')
+            this.user.delete('id_produk[]')
             this.user.delete('subtotal[]')
-            // this.layanan.length = 0
-            // this.hewanSiapa.length = 0
-            // this.customers.length = 0
-            // for (var i = this.rows.length; i > 0; i--) {
-            //     this.rows[i].id_transaksi= ''
-            //     this.rows[i].id_hewan= ''
-            //     this.rows[i].id_layanan= '' 
-            //     this.rows[i].subtotal= ''
-            // }
             this.rows.length = 0
             this.rows= [
                 {
                     'id_transaksi': '',
-                    'id_layanan': '',
+                    'id_produk': '',
                     'subtotal': ''
                 }
             ]
@@ -531,7 +488,7 @@ export default {
             return localStorage.getItem('username');
         },
         setSubtotal(index) {
-            var uri = this.$apiUrl + '/layanan/'+this.rows[index].id_layanan
+            var uri = this.$apiUrl + '/produk/'+this.rows[index].id_produk
             this.$http.get(uri).then(response => {
                 this.rows[index].subtotal = response.data.harga
             })
@@ -539,7 +496,7 @@ export default {
         initData() {
             this.readData();
             this.readDataCustomer();
-            this.readDataLayanan();
+            this.readDataProduk();
             this.readDataHewan();
         }
     },
@@ -551,14 +508,6 @@ export default {
                     // console.log(response.data)
                 })
         },
-        // transaksi: function () {
-        //     this.readData();
-        // }
-        // rows: function () {
-        //     console.log("hapie")
-        //     this.rows.subtotal = this.rows.id_layanan;
-        //         },
-        //     deep: true
     },
     mounted() {
         this.initData()

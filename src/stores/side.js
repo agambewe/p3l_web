@@ -102,6 +102,10 @@ export default {
                         title: 'Layanan', 
                         path: '/TlayananC',
                     },
+                    { 
+                        title: 'Produk', 
+                        path: '/TprodukC',
+                    },
                 ],
             },
             // {
@@ -120,6 +124,10 @@ export default {
                     { 
                         title: 'Layanan', 
                         path: '/TlayananK',
+                    },
+                    { 
+                        title: 'Produk', 
+                        path: '/TprodukK',
                     },
                 ],
             },

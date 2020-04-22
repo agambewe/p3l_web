@@ -7,19 +7,19 @@
                 </v-btn>
             </v-flex> -->
             
-            <div v-if="detailLayanan.length<=0" class="body-1 text-center">
+            <div v-if="detailProduk.length<=0" class="body-1 text-center">
                 Detail belum ada/ masih kosong.
             </div>
             <div v-else>
                 <v-card-title>
                     <span class="headline">Detail Data {{ idTransaksi }} <v-divider inset vertical></v-divider> ({{ hewan.nama }} || {{ hewan.jenis }})</span>
                 </v-card-title>
-                <v-data-table :headers="headers" :items="detailLayanan" :loading="load" hide-default-footer no-data-text="Data kosong" light>
+                <v-data-table :headers="headers" :items="detailProduk" :loading="load" hide-default-footer no-data-text="Data kosong" light>
                     <template v-slot:body="{ items }">
                         <tbody v-if="items.length!=0">
                             <tr v-for="(item, index) in items" :key="item.id">
                                 <td>{{ index+1 }}</td>
-                                <td>{{ item.layanan.nama }}</td>
+                                <td>{{ item.produk.nama }}</td>
                                 <td>{{ item.subtotal }}</td>
                             </tr>
                         </tbody>
@@ -79,18 +79,18 @@ export default {
                         sortable: false
                     },
                     {
-                        text: 'Nama Layanan',
-                        value: 'id_layanan'
+                        text: 'Nama Produk',
+                        value: 'id_produk'
                     },
                     {
                         text: 'Subtotal harga',
                         value: 'subtotal'
                     }
                 ],
-                detailLayanan: [],
+                detailProduk: [],
                 hewan: '',
                 form: {
-                    id_layanan: '',
+                    id_produk: '',
                     jumlah: '',
                     subtotal: ''
                 },
@@ -114,14 +114,14 @@ export default {
         },
         methods: {
             readData() {
-                var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.idTransaksi
+                var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+this.idTransaksi
                 this.$http.get(uri).then(response => {
                     this.detailLayanan = response.data
                     this.readHewan()
                 })
             },
             readHewan() {
-                var uri = this.$apiUrl + '/hewan/'+this.detailLayanan[0].id_hewan
+                var uri = this.$apiUrl + '/hewan/'+this.detailProduk[0].id_hewan
                 this.$http.get(uri).then(response => {
                     this.hewan = response.data
                 })
