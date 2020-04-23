@@ -217,7 +217,7 @@ export default {
             layanan: [],
             rows: [
                 {
-                    'id_transaksi_layanan': '',
+                    'id_transaksi': '',
                     'id_layanan': '',
                     'subtotal': ''
                 }
@@ -256,7 +256,7 @@ export default {
         addRow: function() {
             this.rows.push(
                 {
-                    'id_transaksi_layanan': '',
+                    'id_transaksi': '',
                     'id_layanan': '',
                     'subtotal': ''
                 }
@@ -268,6 +268,7 @@ export default {
         close() {
             this.dialog = false
             this.typeInput = 'Tambah';
+            this.clear()
         },
         clear() {
             this.resetForm();
@@ -504,9 +505,11 @@ export default {
         resetForm() {
             this.changeId('-')
             this.formDetail= {
-                customer: '',
-                id_hewan: '',
+                customer: null,
+                id_hewan: null,
             }
+            this.formDetail.customer = null
+            this.formDetail.id_hewan = null
             // this.user.delete('id_hewan[]')
             this.user.delete('id_layanan[]')
             this.user.delete('subtotal[]')
@@ -520,6 +523,10 @@ export default {
                     'subtotal': ''
                 }
             ]
+            this.customers = []
+            this.hewanSiapa = []
+            this.layanan = []
+            console.log(this.formDetail)
             this.initData();
         },
         getRole() {

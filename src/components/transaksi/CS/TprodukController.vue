@@ -24,7 +24,7 @@
                             <v-row>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
-                                        v-model="customer"
+                                        v-model="formDetail.customer"
                                         :items="customers"
                                         item-value="id"
                                         item-text="nama"
@@ -36,7 +36,7 @@
                                 </v-col>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
-                                        v-model="id_hewan"
+                                        v-model="formDetail.id_hewan"
                                         :items="hewanSiapa"
                                         no-data-text="Customer ini belum punya hewan"
                                         item-value="id"
@@ -50,7 +50,7 @@
                             </v-row>
                             <div v-for="(row, index) in rows" v-bind:key="index">
                                 <v-row>
-                                    <v-col cols="6" md="6">
+                                    <v-col cols="6" md="4">
                                         <v-autocomplete
                                             v-model="row.id_produk"
                                             :items="produk"
@@ -63,7 +63,10 @@
                                             @change="setSubtotal(index)">
                                         </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="6" md="5">
+                                    <v-col cols="6" md="3">
+                                        <v-text-field v-model="row.jumlah" label="jumlah" type="number" required @change="setSubtotal(index)"></v-text-field>
+                                    </v-col>
+                                    <v-col cols="6" md="4">
                                         <v-text-field v-model="row.subtotal" label="Harga" readonly required></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="1">
@@ -212,20 +215,21 @@ export default {
             ],
             transaksi: [],
             customers: [],
-            customer: '',
-            id_hewan: '',
             hewan: [],
             hewanSiapa: [],
             produk: [],
             rows: [
                 {
                     'id_transaksi': '',
+                    'id_hewan': '',
                     'id_produk': '',
+                    'jumlah': '',
                     'subtotal': ''
                 }
             ],
             formDetail: {
-                cs: '',
+                customer: '',
+                id_hewan: '',
                 },
             editDetil: {
                 'id_transaksi': '',
@@ -332,9 +336,9 @@ export default {
         createDataDetail(id) {
             for (var i = 0; i < this.rows.length; i++) {
                 this.user.append('id_transaksi', id);
-                // this.user.append('id_hewan[]', this.rows[i].id_hewan);
-                this.user.append('id_hewan', this.id_hewan);
+                this.user.append('id_hewan', this.formDetail.id_hewan);
                 this.user.append('id_produk[]', this.rows[i].id_produk);
+                this.user.append('jumlah[]', this.rows[i].jumlah);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
             }
             var uri = this.$apiUrl + '/detail-transaksi-produk/'
@@ -464,7 +468,7 @@ export default {
         resetForm() {
             this.changeId('-')
             this.customer= ''
-            this.id_hewan= ''
+            this.formDetail.id_hewan= ''
             this.formDetail= {
                 cs: ''
             }
@@ -475,10 +479,12 @@ export default {
             this.rows= [
                 {
                     'id_transaksi': '',
+                    'id_hewan': '',
                     'id_produk': '',
+                    'jumlah': '',
                     'subtotal': ''
                 }
-            ]
+            ],
             this.initData();
         },
         getRole() {
@@ -490,7 +496,14 @@ export default {
         setSubtotal(index) {
             var uri = this.$apiUrl + '/produk/'+this.rows[index].id_produk
             this.$http.get(uri).then(response => {
-                this.rows[index].subtotal = response.data.harga
+                if(this.rows[index].jumlah==""){
+                    this.rows[index].jumlah = 1
+                }else if(this.rows[index].jumlah==undefined){
+                    this.rows[index].jumlah = 1
+                }
+                if(response.data.harga){
+                    this.rows[index].subtotal = this.rows[index].jumlah*response.data.harga
+                }
             })
         },
         initData() {
@@ -501,8 +514,8 @@ export default {
         }
     },
     watch: {
-        customer: function () {
-            var uri = this.$apiUrl + '/hewan/nya/'+this.customer;
+        'formDetail.customer': function () {
+            var uri = this.$apiUrl + '/hewan/nya/'+this.formDetail.customer;
                 this.$http.get(uri).then(response => {
                     this.hewanSiapa = response.data
                     // console.log(response.data)
