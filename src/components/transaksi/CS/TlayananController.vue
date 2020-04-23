@@ -6,7 +6,7 @@
             <v-dialog v-model="dialog" persistent max-width="1000px">
                 <template v-slot:activator="{ on }">
                     <v-flex class="flex" xs8 style="float:right;widht:300">
-                        <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear()">
+                        <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear">
                             <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                     </v-flex>
@@ -24,7 +24,7 @@
                             <v-row>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
-                                        v-model="customer"
+                                        v-model="formDetail.customer"
                                         :items="customers"
                                         item-value="id"
                                         item-text="nama"
@@ -36,7 +36,7 @@
                                 </v-col>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
-                                        v-model="id_hewan"
+                                        v-model="formDetail.id_hewan"
                                         :items="hewanSiapa"
                                         no-data-text="Customer masih kosong/ belum punya hewan"
                                         item-value="id"
@@ -79,7 +79,7 @@
                         <v-btn color="indigo darken-2" text @click="addRow">Tambah form</v-btn>
                         <v-spacer></v-spacer>
                         <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
-                        <v-btn color="green lighten-1" text @click="createData()">Simpan</v-btn>
+                        <v-btn color="green lighten-1" text @click="setForm()">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -212,8 +212,6 @@ export default {
             ],
             transaksi: [],
             customers: [],
-            customer: '',
-            id_hewan: '',
             hewan: [],
             hewanSiapa: [],
             layanan: [],
@@ -225,7 +223,8 @@ export default {
                 }
             ],
             formDetail: {
-                cs: '',
+                customer: '',
+                id_hewan: '',
                 },
             editDetil: {
                 'id_transaksi': '',
@@ -268,6 +267,7 @@ export default {
         },
         close() {
             this.dialog = false
+            this.typeInput = 'Tambah';
         },
         clear() {
             this.resetForm();
@@ -333,7 +333,7 @@ export default {
             for (var i = 0; i < this.rows.length; i++) {
                 this.user.append('id_transaksi', id);
                 // this.user.append('id_hewan[]', this.rows[i].id_hewan);
-                this.user.append('id_hewan', this.id_hewan);
+                this.user.append('id_hewan', this.formDetail.id_hewan);
                 this.user.append('id_layanan[]', this.rows[i].id_layanan);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
             }
@@ -364,13 +364,14 @@ export default {
             })
         },
         editHandler(item) {
+            this.typeInput = 'Ubah';
             this.dialog = true;
             var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+item.id_transaksi
                 this.$http.get(uri).then(response => {
-                    var det = response.data.value
+                    var det = response.data
                     this.editDetil.id_transaksi = det[0].id_transaksi
-                    this.id_hewan = det[0].id_hewan
-                    this.customer = det[0].id_customer
+                    this.formDetail.id_hewan = det[0].hewan.id
+                    this.formDetail.customer = det[0].hewan.id_customer
 
                     for (var i = 0; i < det.length; i++) {
                         this.rows[i].id_layanan = det[i].id_layanan
@@ -381,16 +382,13 @@ export default {
                 })
         },
         updateDetail() {
-            this.user.append('nama', this.form.nama);
-            this.user.append('username', this.form.username);
-            this.user.append('alamat', this.form.alamat);
-            this.user.append('tanggal_lahir', this.form.tanggal_lahir);
-            this.user.append('telepon', this.form.telepon);
-            this.user.append('role', this.form.role);
-            if (this.checked)
-                this.user.append('password', this.form.password);
+            for (var i = 0; i < this.rows.length; i++) {
+                this.user.append('id_hewan', this.formDetail.id_hewan);
+                this.user.append('id_layanan[]', this.rows[i].id_layanan);
+                this.user.append('subtotal[]', this.rows[i].subtotal);   
+            }
 
-            var uri = this.$apiUrl + '/pegawai/' + this.updatedId;
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/' + this.editDetil.id_transaksi;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.$swal({
@@ -416,6 +414,7 @@ export default {
                 this.load = false;
             })
         },
+
         updateData(id) {
             var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
             this.load = true
@@ -495,26 +494,25 @@ export default {
                 }
             })
         },
+        setForm() {
+            if (this.typeInput === 'Tambah') {
+                this.createData()
+            } else {
+                this.updateDetail()
+            }
+        },
         resetForm() {
             this.changeId('-')
-            this.customer= ''
-            this.id_hewan= ''
             this.formDetail= {
-                cs: ''
+                customer: '',
+                id_hewan: '',
             }
             // this.user.delete('id_hewan[]')
             this.user.delete('id_layanan[]')
             this.user.delete('subtotal[]')
-            // this.layanan.length = 0
-            // this.hewanSiapa.length = 0
-            // this.customers.length = 0
-            // for (var i = this.rows.length; i > 0; i--) {
-            //     this.rows[i].id_transaksi= ''
-            //     this.rows[i].id_hewan= ''
-            //     this.rows[i].id_layanan= '' 
-            //     this.rows[i].subtotal= ''
-            // }
+
             this.rows.length = 0
+            // this.rows[0].id_layanan= ''
             this.rows= [
                 {
                     'id_transaksi': '',
@@ -544,8 +542,8 @@ export default {
         }
     },
     watch: {
-        customer: function () {
-            var uri = this.$apiUrl + '/hewan/nya/'+this.customer;
+        'formDetail.customer': function () {
+            var uri = this.$apiUrl + '/hewan/nya/'+this.formDetail.customer;
                 this.$http.get(uri).then(response => {
                     this.hewanSiapa = response.data
                     // console.log(response.data)
