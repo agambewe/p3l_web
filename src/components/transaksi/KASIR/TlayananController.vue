@@ -31,7 +31,13 @@
                     </v-card-title>
                     <v-card-text>
                         <v-container>
-                            <v-row>
+                            <div v-if="typeInput === 'Tambah'">
+                                <label >Member ? </label>
+                                    <input type="checkbox" id="checkbox" v-model="checked">
+                            </div>
+                            <v-row v-if="!checked">
+                            </v-row>
+                            <v-row v-else>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
                                         v-model="formDetail.customer"
@@ -207,6 +213,7 @@ export default {
             dialog: false,
             dialogEdit: false,
             dialogDetail: false,
+            checked: false,
             typeInput: 'Masukkan',
             keyword: '',
             headers: [{
@@ -385,8 +392,11 @@ export default {
                 this.$http.get(uri).then(response => {
                     var det = response.data
                     this.editDetil.id_transaksi = det[0].id_transaksi
-                    this.formDetail.id_hewan = det[0].hewan.id
-                    this.formDetail.customer = det[0].hewan.id_customer
+                    if(!!det[0].hewan){
+                        this.checked = true;
+                        this.formDetail.id_hewan = det[0].hewan.id
+                        this.formDetail.customer = det[0].hewan.id_customer
+                    }
 
                     for (var i = 0; i < det.length; i++) {
                         this.rows[i].id_layanan = det[i].id_layanan
@@ -398,7 +408,9 @@ export default {
         },
         updateDetail() {
             for (var i = 0; i < this.rows.length; i++) {
-                this.user.append('id_hewan', this.formDetail.id_hewan);
+                if (this.checked){
+                    this.user.append('id_hewan', this.formDetail.id_hewan);
+                }
                 this.user.append('id_layanan[]', this.rows[i].id_layanan);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
             }

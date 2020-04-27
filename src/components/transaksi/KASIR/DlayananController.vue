@@ -88,7 +88,10 @@ export default {
                     }
                 ],
                 detailLayanan: [],
-                hewan: '',
+                hewan: {
+                    nama: '',
+                    jenis: '',
+                },
                 form: {
                     id_layanan: '',
                     jumlah: '',
@@ -117,11 +120,16 @@ export default {
                 var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.idTransaksi
                 this.$http.get(uri).then(response => {
                     this.detailLayanan = response.data
-                    this.readHewan()
+                    if(!this.detailLayanan[0].id_hewan){
+                        this.hewan.nama = "guest"
+                        this.hewan.jenis = "guest"
+                    }else{
+                        this.readHewan(this.detailLayanan[0].id_hewan)
+                    }
                 })
             },
-            readHewan() {
-                var uri = this.$apiUrl + '/hewan/'+this.detailLayanan[0].id_hewan
+            readHewan(id) {
+                var uri = this.$apiUrl + '/hewan/'+id
                 this.$http.get(uri).then(response => {
                     this.hewan = response.data
                 })
