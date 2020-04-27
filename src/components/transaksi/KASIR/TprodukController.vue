@@ -183,6 +183,7 @@ export default {
         close() {
             this.dialog = false,
             this.typeInput = 'Masukkan';
+            this.clear();
         },
         clear() {
             this.resetForm();

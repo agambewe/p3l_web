@@ -124,8 +124,8 @@
                             {{ item.id_transaksi }}
                         </td>
                         <td>
-                            <v-btn x-small color="red lighten-2" @click="updateAlert">
-                                Belum dibayar
+                            <v-btn x-small color="red lighten-2" @click="updateData(item.id)">
+                                Pindah ke Kasir
                             </v-btn>
                         </td>
                     </tr>
@@ -467,15 +467,58 @@ export default {
                 this.load = false;
             })
         },
-        updateAlert() {
+        updateData(id) {
+            var uri = this.$apiUrl + '/order-produk/pindah-kasir/' + id;
+            this.load = true
             this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Apakah produk ini siap dibayar??',
                 icon: 'warning',
-                title: 'Berhenti!',
-                text: 'Hak akses ditolak ..',
-                showConfirmButton: false,
-                timer: 2000
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.$http.post(uri).then(response => {
+                        this.$swal({
+                            icon: 'success',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                        this.close();
+                        this.readData(); //refresh data ini 
+                        this.resetForm();
+                    }).catch(error => {
+                        this.errors = error
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Gagal mengubah data!',
+                            text: 'Coba lagi ..',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                    })
+                }
+                this.load = false;
             })
         },
+        // updateAlert() {
+        //     this.$swal({
+        //         icon: 'warning',
+        //         title: 'Berhenti!',
+        //         text: 'Hak akses ditolak ..',
+        //         showConfirmButton: false,
+        //         timer: 2000
+        //     })
+        // },
         deleteData(deleteId) {
             //mengahapus data 
             var uri = this.$apiUrl + '/order-produk/' + deleteId;
