@@ -20,6 +20,7 @@
                             <tr v-for="(item, index) in items" :key="item.id">
                                 <td>{{ index+1 }}</td>
                                 <td>{{ item.produk.nama }}</td>
+                                <td>{{ item.jumlah }}</td>
                                 <td>{{ item.subtotal }}</td>
                             </tr>
                         </tbody>
@@ -81,6 +82,10 @@ export default {
                     {
                         text: 'Nama Produk',
                         value: 'id_produk'
+                    },
+                    {
+                        text: 'Jumlah',
+                        value: 'jumlah'
                     },
                     {
                         text: 'Subtotal harga',
