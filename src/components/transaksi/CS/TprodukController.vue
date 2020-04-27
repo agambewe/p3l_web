@@ -364,7 +364,6 @@ export default {
                     timer: 1500
                 })
                 this.createDataDetail(response.data.value);
-                this.close();
                 this.readData(); //mengambil data user 
                 // this.resetForm();
             }).catch(error => {
@@ -377,7 +376,8 @@ export default {
                     showConfirmButton: false,
                     // timer: 1500
                 })
-                this.load = false;
+                this.close();
+                // this.load = false;
             })
         },
         createDataDetail(id) {

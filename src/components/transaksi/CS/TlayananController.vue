@@ -192,6 +192,7 @@ export default {
             load: false,
             dialog: false,
             dialogDetail: false,
+            checked: false,
             typeInput: 'Tambah',
             keyword: '',
             headers: [{
@@ -360,7 +361,7 @@ export default {
                     timer: 1500
                 })
                 this.createDataDetail(response.data.value);
-                this.close();
+                // this.close();
                 this.readData(); //mengambil data user 
                 // this.resetForm();
             }).catch(error => {
@@ -373,6 +374,7 @@ export default {
                     showConfirmButton: false,
                     // timer: 1500
                 })
+                this.close();
                 this.load = false;
             })
         },
