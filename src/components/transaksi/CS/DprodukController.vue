@@ -125,11 +125,11 @@ export default {
                 var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+this.idTransaksi
                 this.$http.get(uri).then(response => {
                     this.detailProduk = response.data
-                    if(!this.detailLayanan[0].id_hewan){
+                    if(!this.detailProduk[0].id_hewan){
                         this.hewan.nama = "guest"
                         this.hewan.jenis = "guest"
                     }else{
-                        this.readHewan(this.detailLayanan[0].id_hewan)
+                        this.readHewan(this.detailProduk[0].id_hewan)
                     }
                 })
             },
