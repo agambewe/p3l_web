@@ -12,22 +12,14 @@
             </div>
             <div v-else>
                 <v-card-title>
-                    <span class="headline">Detail Data {{ idTransaksi }} <v-divider inset vertical></v-divider> ({{ hewan.value.nama }} || {{ hewan.value.jenis }})</span>
+                    <span class="headline">Detail Data {{ idTransaksi }} <v-divider inset vertical></v-divider> ({{ hewan.nama }} || {{ hewan.jenis }})</span>
                 </v-card-title>
                 <v-data-table :headers="headers" :items="detailLayanan" :loading="load" hide-default-footer no-data-text="Data kosong" light>
                     <template v-slot:body="{ items }">
                         <tbody v-if="items.length!=0">
                             <tr v-for="(item, index) in items" :key="item.id">
                                 <td>{{ index+1 }}</td>
-                                <td>
-                                    <v-autocomplete
-                                        v-model="item.id_layanan" 
-                                        :items="layanan"
-                                        item-value="id"
-                                        item-text="nama"
-                                        readonly>
-                                    </v-autocomplete>
-                                </td>
+                                <td>{{ item.layanan.nama }}</td>
                                 <td>{{ item.subtotal }}</td>
                             </tr>
                         </tbody>
@@ -86,14 +78,6 @@ export default {
                         value: null,
                         sortable: false
                     },
-                    // {
-                    //     text: 'ID PO',
-                    //     value: 'id_transaksi'
-                    // },
-                    // {
-                    //     text: 'Nama Hewan',
-                    //     value: 'id_hewan'
-                    // },
                     {
                         text: 'Nama Layanan',
                         value: 'id_layanan'
@@ -104,8 +88,7 @@ export default {
                     }
                 ],
                 detailLayanan: [],
-                layanan: [],
-                hewan: [],
+                hewan: '',
                 form: {
                     id_layanan: '',
                     jumlah: '',
@@ -126,41 +109,28 @@ export default {
         },
         watch: {
             idTransaksi: function () {
-                // this.readHewan();
                 this.readData();
-                this.readHewan(this.detailLayanan[0].id_hewan);
-                this.readLayanan();
             }
         },
         methods: {
-            readLayanan() {
-                var uri = this.$apiUrl + '/layanan/'
-                this.$http.get(uri).then(response => {
-                    this.layanan = response.data
-                })
-            },
-            readHewan(id) {
-                var uri = this.$apiUrl + '/hewan/'+id
-                this.$http.get(uri).then(response => {
-                    this.hewan = response.data
-                })
-            },
             readData() {
                 var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.idTransaksi
                 this.$http.get(uri).then(response => {
                     this.detailLayanan = response.data
-                    this.readHewan(this.detailLayanan[0].id_hewan);
+                    this.readHewan()
+                })
+            },
+            readHewan() {
+                var uri = this.$apiUrl + '/hewan/'+this.detailLayanan[0].id_hewan
+                this.$http.get(uri).then(response => {
+                    this.hewan = response.data
                 })
             },
             clear(){
-                
-            // console.log(this.detailLayanan.length)
             }
         },
         mounted() {
-            // this.readHewan();
             this.readData();
-            this.readLayanan();
         },
     }
 </script>

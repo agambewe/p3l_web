@@ -116,7 +116,7 @@ export default {
             readData() {
                 var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+this.idTransaksi
                 this.$http.get(uri).then(response => {
-                    this.detailLayanan = response.data
+                    this.detailProduk = response.data
                     this.readHewan()
                 })
             },

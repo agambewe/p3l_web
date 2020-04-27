@@ -82,7 +82,7 @@
                         <v-btn color="indigo darken-2" text @click="addRow">Tambah form</v-btn>
                         <v-spacer></v-spacer>
                         <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
-                        <v-btn color="green lighten-1" text @click="createData()">Simpan</v-btn>
+                        <v-btn color="green lighten-1" text @click="setForm()">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -252,9 +252,6 @@ export default {
         },
     },
     methods: {
-        // createData(){
-        //     console.log(this.rows[0].id_produk)
-        // },
         ...mapMutations({
             changeId: "transaksi/changeId",
         }),
@@ -262,16 +259,66 @@ export default {
             this.rows.push(
                 {
                     'id_transaksi': '',
+                    'id_hewan': '',
                     'id_produk': '',
+                    'jumlah': '',
                     'subtotal': ''
                 }
             );
         },
         deleteRow: function(index) {
-            this.rows.splice(index, 1);
+            if (this.typeInput === 'Ubah') {
+                this.$swal({
+                    title: 'Apa kamu yakin??',
+                    text: 'Batalkan detail ini??',
+                    icon: 'warning',
+                    cancelButtonColor: '#FF5252',
+                    confirmButtonColor: '#BDBDBD',
+                    cancelButtonText: 'Oke!',
+                    confirmButtonText: 'Batal',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    // reverseButtons: true,
+                    allowOutsideClick: false,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (!result.value) {
+                        this.deleteRowApi(index);
+                        this.rows.splice(index, 1);
+                    }
+                })
+            }else this.rows.splice(index, 1);
+        },
+        deleteRowApi(r) {
+            this.user.append('index', r);
+
+            var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+this.editDetil.id_transaksi;
+            this.load = true
+            this.$http.post(uri, this.user).then(response => {
+                this.$swal({
+                    icon: 'success',
+                    title: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.load = false;
+                this.readData(); //refresh data ini 
+            }).catch(error => {
+                this.errors = error
+                this.$swal({
+                    icon: 'error',
+                    title: 'Gagal mengubah data!',
+                    text: 'Coba lagi ..',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.load = false;
+            })
         },
         close() {
             this.dialog = false
+            this.typeInput = 'Tambah';
+            this.clear()
         },
         clear() {
             this.resetForm();
@@ -368,16 +415,18 @@ export default {
             })
         },
         editHandler(item) {
+            this.typeInput = 'Ubah';
             this.dialog = true;
             var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+item.id_transaksi
                 this.$http.get(uri).then(response => {
-                    var det = response.data.value
+                    var det = response.data
                     this.editDetil.id_transaksi = det[0].id_transaksi
-                    this.id_hewan = det[0].id_hewan
-                    this.customer = det[0].id_customer
+                    this.formDetail.id_hewan = det[0].hewan.id
+                    this.formDetail.customer = det[0].hewan.id_customer
 
                     for (var i = 0; i < det.length; i++) {
                         this.rows[i].id_produk = det[i].id_produk
+                        this.rows[i].jumlah = det[i].jumlah
                         this.rows[i].subtotal = det[i].subtotal
                         this.addRow()
                     }
@@ -385,16 +434,14 @@ export default {
                 })
         },
         updateDetail() {
-            this.user.append('nama', this.form.nama);
-            this.user.append('username', this.form.username);
-            this.user.append('alamat', this.form.alamat);
-            this.user.append('tanggal_lahir', this.form.tanggal_lahir);
-            this.user.append('telepon', this.form.telepon);
-            this.user.append('role', this.form.role);
-            if (this.checked)
-                this.user.append('password', this.form.password);
+            for (var i = 0; i < this.rows.length; i++) {
+                this.user.append('id_hewan', this.formDetail.id_hewan);
+                this.user.append('id_produk[]', this.rows[i].id_produk);
+                this.user.append('jumlah[]', this.rows[i].jumlah);
+                this.user.append('subtotal[]', this.rows[i].subtotal);   
+            }
 
-            var uri = this.$apiUrl + '/pegawai/' + this.updatedId;
+            var uri = this.$apiUrl + '/detail-transaksi-produk/' + this.editDetil.id_transaksi;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.$swal({
@@ -465,16 +512,23 @@ export default {
                 }
             })
         },
+        setForm() {
+            if (this.typeInput === 'Tambah') {
+                this.createData()
+            } else {
+                this.updateDetail()
+            }
+        },
         resetForm() {
             this.changeId('-')
-            this.customer= ''
-            this.formDetail.id_hewan= ''
             this.formDetail= {
-                cs: ''
+                customer: '',
+                id_hewan: '',
             }
-            // this.user.delete('id_hewan[]')
             this.user.delete('id_produk[]')
+            this.user.delete('jumlah[]')
             this.user.delete('subtotal[]')
+            this.user.delete('index')
             this.rows.length = 0
             this.rows= [
                 {
@@ -485,6 +539,9 @@ export default {
                     'subtotal': ''
                 }
             ],
+            this.customers = []
+            this.hewanSiapa = []
+            this.produk = []
             this.initData();
         },
         getRole() {

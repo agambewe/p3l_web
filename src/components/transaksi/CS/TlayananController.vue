@@ -263,7 +263,53 @@ export default {
             );
         },
         deleteRow: function(index) {
-            this.rows.splice(index, 1);
+            if (this.typeInput === 'Ubah') {
+                this.$swal({
+                    title: 'Apa kamu yakin??',
+                    text: 'Batalkan detail ini??',
+                    icon: 'warning',
+                    cancelButtonColor: '#FF5252',
+                    confirmButtonColor: '#BDBDBD',
+                    cancelButtonText: 'Oke!',
+                    confirmButtonText: 'Batal',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    // reverseButtons: true,
+                    allowOutsideClick: false,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (!result.value) {
+                        this.deleteRowApi(index);
+                        this.rows.splice(index, 1);
+                    }
+                })
+            }else this.rows.splice(index, 1);
+        },
+        deleteRowApi(r) {
+            this.user.append('index', r);
+
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.editDetil.id_transaksi;
+            this.load = true
+            this.$http.post(uri, this.user).then(response => {
+                this.$swal({
+                    icon: 'success',
+                    title: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.load = false;
+                this.readData(); //refresh data ini
+            }).catch(error => {
+                this.errors = error
+                this.$swal({
+                    icon: 'error',
+                    title: 'Gagal mengubah data!',
+                    text: 'Coba lagi ..',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                this.load = false;
+            })
         },
         close() {
             this.dialog = false
@@ -526,7 +572,7 @@ export default {
             this.customers = []
             this.hewanSiapa = []
             this.layanan = []
-            console.log(this.formDetail)
+            // console.log(this.formDetail)
             this.initData();
         },
         getRole() {

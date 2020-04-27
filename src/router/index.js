@@ -65,6 +65,7 @@ const routes = [
             
             //TransaksiKasir
             { name: 'TlayananControllerKASIR', path: '/TlayananK', component: loadTransKASIR('TlayananController') },
+            { name: 'TprodukControllerKASIR', path: '/TprodukK', component: loadTransKASIR('TprodukController') },
         ],
         beforeEnter: (to, from, next) => {
             if(localStorage.getItem('username')) {
