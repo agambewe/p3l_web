@@ -84,7 +84,7 @@
                     <v-card-actions>
                         <v-btn color="indigo darken-2" text @click="addRow">Tambah form</v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
+                        <v-btn color="blue accent-2" text @click="restoreList()">Batal</v-btn>
                         <v-btn color="green lighten-1" text @click="setForm()">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
@@ -298,23 +298,23 @@ export default {
             var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.editDetil.id_transaksi;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
-                this.$swal({
-                    icon: 'success',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'success',
+                //     title: response.data.message,
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
                 this.load = false;
                 this.readData(); //refresh data ini
             }).catch(error => {
                 this.errors = error
-                this.$swal({
-                    icon: 'error',
-                    title: 'Gagal mengubah data!',
-                    text: 'Coba lagi ..',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'error',
+                //     title: 'Gagal mengubah data!',
+                //     text: 'Coba lagi ..',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
                 this.load = false;
             })
         },
@@ -519,6 +519,12 @@ export default {
                 }
                 this.load = false;
             })
+        },
+        restoreList(){
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/restore/'+this.editDetil.id_transaksi;
+                this.$http.get(uri).then(response => {
+                })
+            this.close()
         },
         deleteData(deleteId) {
             //mengahapus data 

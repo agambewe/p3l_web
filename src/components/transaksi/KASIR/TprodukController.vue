@@ -96,7 +96,7 @@
                     </v-card-text>
                     <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
+                            <v-btn color="blue accent-2" text @click="restoreList()">Batal</v-btn>
                             <v-btn color="green lighten-1" text @click="updateDetail()">Simpan</v-btn>
                         </v-card-actions>
                 </v-card>
@@ -118,7 +118,7 @@
                     </v-card>
                 </v-dialog>
         </v-layout>
-        <v-data-table :headers="headers" :items-per-page="5" :items="transaksi" :sort-by="'status_order'" :sort-desc="false" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+        <v-data-table :headers="headers" :items-per-page="5" :items="transaksi" :sort-by="'status_bayar'" :sort-desc="false" :search="keyword" :loading="load" no-data-text="Data kosong" light>
             <template v-slot:body="{ items }">
                 <tbody v-if="items.length!=0">
                     <tr v-for="item in items" :key="item.id">
@@ -327,23 +327,23 @@ export default {
             var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+this.editDetil.id_transaksi;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
-                this.$swal({
-                    icon: 'success',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'success',
+                //     title: response.data.message,
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
                 this.load = false;
                 this.readData(); //refresh data ini 
             }).catch(error => {
                 this.errors = error
-                this.$swal({
-                    icon: 'error',
-                    title: 'Gagal mengubah data!',
-                    text: 'Coba lagi ..',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+                // this.$swal({
+                //     icon: 'error',
+                //     title: 'Gagal mengubah data!',
+                //     text: 'Coba lagi ..',
+                //     showConfirmButton: false,
+                //     timer: 1500
+                // })
                 this.load = false;
             })
         },
@@ -494,6 +494,12 @@ export default {
                 }
                 this.load = false;
             })
+        },
+        restoreList(){
+            var uri = this.$apiUrl + '/detail-transaksi-produk/restore/'+this.editDetil.id_transaksi;
+                this.$http.get(uri).then(response => {
+                })
+            this.close()
         },
         deleteData(deleteId) {
             //mengahapus data 
