@@ -1,12 +1,12 @@
 <template>
 <v-container dark>
     <v-container grid-list-md mb-0>
-        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Data Pengadaan</h1>
+        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Order Restok</h1>
         <v-layout row wrap style="margin:10px">
             <v-dialog v-model="dialog" persistent max-width="1000px">
                 <template v-slot:activator="{ on }">
                     <v-flex class="flex" xs8 style="float:right;widht:300">
-                        <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear()">
+                        <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear">
                             <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                     </v-flex>
@@ -24,8 +24,8 @@
                             <v-row>
                                 <v-col cols="6" md="12">
                                     <v-autocomplete
-                                        v-model="formDetail.id_supplier"
-                                        :items="supplier"
+                                        v-model="formDetail.supplier"
+                                        :items="suppliers"
                                         item-value="id"
                                         item-text="nama"
                                         label="Supplier"
@@ -37,9 +37,6 @@
                             </v-row>
                             <div v-for="(row, index) in rows" v-bind:key="index">
                                 <v-row>
-                                    <!-- <v-col hidden cols="12" md="4">
-                                        <v-text-field v-model="row.id_po" label="ID PO" required></v-text-field>
-                                    </v-col> -->
                                     <v-col cols="6" md="4">
                                         <v-autocomplete
                                             v-model="row.id_produk"
@@ -49,14 +46,15 @@
                                             label="Produk"
                                             required
                                             hide-selected
-                                            clearable>
+                                            clearable
+                                            @change="setSatuan(index)">
                                         </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12" md="3">
-                                        <v-text-field v-model="row.jumlah" label="Jumlah" required></v-text-field>
+                                    <v-col cols="6" md="4">
+                                        <v-text-field v-model="row.satuan" label="Satuan" readonly required></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="4">
-                                        <v-text-field v-model="row.subtotal" label="Harga" required></v-text-field>
+                                    <v-col cols="6" md="3">
+                                        <v-text-field v-model="row.jumlah" label="Jumlah" type="number" required></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="1">
                                         <v-btn icon color="amber darken-4" @click="deleteRow(index)">
@@ -70,38 +68,65 @@
                     <v-card-actions>
                         <v-btn color="indigo darken-2" text @click="addRow">Tambah form</v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
-                        <v-btn color="green lighten-1" text @click="createData()">Simpan</v-btn>
+                        <v-btn color="blue accent-2" text @click="restoreList()">Batal</v-btn>
+                        <v-btn color="green lighten-1" text @click="setForm()">Simpan</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+            <v-dialog v-model="dialogDetail" persistent max-width="550px">
+                    <v-card>
+                        <v-card-text>
+                            <v-container>
+                                <tbody>
+                                    <ul>
+                                        <Detail></Detail>
+                                    </ul>
+                                </tbody>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
         </v-layout>
-        <v-data-table :headers="headers" :items-per-page="5" :items="pengadaan" :sort-by="'status_order'" :sort-desc="false" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+        <v-data-table :headers="headers" :items-per-page="5" :items="restock" :sort-by="'status_order'" :sort-desc="false" :search="keyword" :loading="load" no-data-text="Data kosong" light>
             <template v-slot:body="{ items }">
                 <tbody v-if="items.length!=0">
                     <tr v-for="item in items" :key="item.id">
-                        <td>
+                        <td >
                             <div class="flex">
-                                <v-btn icon color="amber accent-3" @click="readDetail()">
+                                <v-btn icon color="amber accent-3" @click="readDetail(item)">
                                     <v-icon>mdi-arrow-down</v-icon>
+                                </v-btn>
+                                <v-btn v-if="item.status_order==0" icon color="amber accent-3" @click="editHandler(item)">
+                                    <v-icon>mdi-pencil</v-icon>
+                                </v-btn>
+                                <v-btn v-if="item.status_order==0" icon color="red darken-4" @click="deleteData(item.id)">
+                                    <v-icon>mdi-window-close</v-icon>
                                 </v-btn>
                             </div>
                         </td>
                         <td>
-                            <v-btn x-small color="green lighten-2" v-if="item.status_order == 1">
-                                Diterima
+                            <v-btn v-if="item.status_order==0" x-small color="red lighten-2" @click="updateData(item.id)">
+                                Dalam proses
                             </v-btn>
-                            <v-btn x-small color="red lighten-2" v-else @click="updateData(item.id)">
-                                Dalam pengiriman
+                            <v-btn v-else x-small color="green lighten-2">
+                                Sudah diterima
                             </v-btn>
                         </td>
-                        <td>{{ item.id_po }}</td>
                         <td>
-                            <v-autocomplete v-model="item.id_supplier" :items="supplier" item-value="id" item-text="nama" readonly>
-                            </v-autocomplete>
+                            {{ item.id_po }}
                         </td>
-                        <td>{{ item.tanggal_restock }}</td>
-                        <td>{{ item.total_bayar }}</td>
+                        <td>
+                            {{ item.supplier.nama }}
+                        </td>
+                        <td>
+                            {{ item.tanggal_restock }}
+                        </td>
+                        <td>
+                            {{ item.total_bayar }}
+                        </td>
                     </tr>
                 </tbody>
                 <tbody v-else>
@@ -110,7 +135,7 @@
             </template>
         </v-data-table>
         <v-divider></v-divider>
-        <Detail></Detail>
+        <!-- <Detail></Detail> -->
     </v-container>
 </v-container>
 </template>
@@ -157,6 +182,7 @@ tbody tr:nth-of-type(odd) {
 </style>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import Detail from "./detailController";
 
 export default {
@@ -167,12 +193,15 @@ export default {
         return {
             load: false,
             dialog: false,
+            dialogDetail: false,
             typeInput: 'Tambah',
             keyword: '',
             headers: [{
-                    text: 'Detail',
+                    text: 'Aksi',
                     value: null,
-                    sortable: false
+                    sortable: false,
+                    align: 'center',
+                    width: 150
                 },
                 {
                     text: 'Status',
@@ -187,7 +216,7 @@ export default {
                     value: 'id_supplier'
                 },
                 {
-                    text: 'Tanggal Restock',
+                    text: 'Tanggal Restok',
                     value: 'tanggal_restock'
                 },
                 {
@@ -195,32 +224,33 @@ export default {
                     value: 'total_bayar'
                 },
             ],
-            pengadaan: [],
-            lastIdPo: '',
-            supplier: [],
+            restock: [],
+            suppliers: [],
             produk: [],
             rows: [
                 {
-                    'id_order_restock': '',
+                    'id_po': '',
                     'id_produk': '',
-                    'jumlah': '',
-                    'subtotal': ''
+                    'satuan': '',
+                    'jumlah': ''
                 }
             ],
-            form: {
-                id_supplier: '',
-                tanggal_restock: '',
-                total_bayar: '',
-                status_order: ''
-            },
             formDetail: {
-                id_supplier: '',
-                id_order_restock: '',
-                id_po: ''
+                supplier: '',
                 },
+            editDetil: {
+                'id_po': '',
+                'id_supplier': '',
+                rows: [
+                    {
+                    'id_po': '',
+                    'id_produk': '',
+                    'satuan': '',
+                    'jumlah': ''
+                }],
+            },
             errors: '',
             user: new FormData,
-            date: new Date(),
         }
     },
     computed: {
@@ -229,41 +259,67 @@ export default {
         },
     },
     methods: {
-        // createData(){
-        //     console.log(this.rows[0].id_produk)
-        // },
+        ...mapMutations({
+            changeId: "restock/changeId",
+        }),
         addRow: function() {
             this.rows.push(
                 {
-                    'id_order_restock': '',
+                    'id_po': '',
                     'id_produk': '',
-                    'jumlah': '',
-                    'subtotal': ''
+                    'satuan': '',
+                    'jumlah': ''
                 }
             );
         },
         deleteRow: function(index) {
-            this.rows.splice(index, 1);
+            if (this.typeInput === 'Ubah') {
+                this.$swal({
+                    title: 'Apa kamu yakin??',
+                    text: 'Batalkan detail ini??',
+                    icon: 'warning',
+                    cancelButtonColor: '#FF5252',
+                    confirmButtonColor: '#BDBDBD',
+                    cancelButtonText: 'Oke!',
+                    confirmButtonText: 'Batal',
+                    showCancelButton: true,
+                    allowEscapeKey: false,
+                    // reverseButtons: true,
+                    allowOutsideClick: false,
+                    dangerMode: true,
+                }).then((result) => {
+                    if (!result.value) {
+                        this.deleteRowApi(index);
+                        this.rows.splice(index, 1);
+                    }
+                })
+            }else this.rows.splice(index, 1);
+        },
+        deleteRowApi(r) {
+            this.user.append('index', r);
+
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.editDetil.id_transaksi;
+            this.load = true
+            this.$http.post(uri, this.user).then(response => {
+                this.load = false;
+                this.readData(); //refresh data ini
+            }).catch(error => {
+                this.errors = error
+                this.load = false;
+            })
         },
         close() {
             this.dialog = false
+            this.typeInput = 'Tambah';
+            this.clear()
         },
         clear() {
             this.resetForm();
         },
-        lastObject() {
-            var last = Object.keys(this.supplier)[Object.keys(this.supplier).length-1];
-            // console.log(this.supplier);
-        },
-        getTanggalSekarang() {
-            var tanggal = this.date.getMonth()+1;
-            var sekarang = this.date.getFullYear()+'-'+tanggal+'-'+this.date.getDate();
-            return sekarang;
-        },
         readDataSupplier() {
             var uri = this.$apiUrl + '/supplier/'
             this.$http.get(uri).then(response => {
-                this.supplier = response.data
+                this.suppliers = response.data
             })
         },
         readDataProduk() {
@@ -275,29 +331,15 @@ export default {
         readData() {
             var uri = this.$apiUrl + '/order-restock/'
             this.$http.get(uri).then(response => {
-                this.pengadaan = response.data
-                var last = Object.keys(this.pengadaan)[Object.keys(this.pengadaan).length-1];
-                if(last>=0){
-                    last = this.pengadaan[last].id_po
-                    this.lastIdPo= ++last.split("-")[4];
-                    if(this.lastIdPo.toString().length==1){
-                        this.lastIdPo= 'PO-'+last.split("-")[1]+'-'+last.split("-")[2]+'-'+last.split("-")[3]+'-'+0+this.lastIdPo;
-                    }else{
-                        this.lastIdPo= 'PO-'+last.split("-")[1]+'-'+last.split("-")[2]+'-'+last.split("-")[3]+'-'+this.lastIdPo;
-                    }
-                    }else{
-                    this.lastIdPo="PO-2020-03-01-48"
-                }
-                // console.log(this.lastIdPo)
+                this.restock = response.data
             })
         },
-        readDetail() {},
+        readDetail(item) {
+            this.changeId(item.id_po);
+            this.dialogDetail = true
+        },
         createData() {
-            this.formDetail.id_po = this.lastIdPo;
-            this.user.append('id_po', this.formDetail.id_po);
-            this.user.append('id_supplier', this.formDetail.id_supplier);
-            this.user.append('tanggal_restock', this.getTanggalSekarang());
-            this.user.append('total_bayar', 0);
+            this.user.append('id_supplier', this.formDetail.supplier);
 
             var uri = this.$apiUrl + '/order-restock/'
             this.load = true
@@ -308,30 +350,27 @@ export default {
                     showConfirmButton: false,
                     timer: 1500
                 })
-                this.formDetail.id_order_restock = response.data.id
-                this.createDataDetail();
-                // this.load = false;
-                this.close();
+                this.createDataDetail(response.data.value);
                 this.readData(); //mengambil data user 
-                this.resetForm();
             }).catch(error => {
                 this.errors = error
                 this.$swal({
                     icon: 'error',
-                    title: 'Gagal menambah data!',
+                    // title: 'Gagal menambah data!',
+                    title: this.errors,
                     text: 'Coba lagi ..',
                     showConfirmButton: false,
-                    timer: 1500
+                    // timer: 1500
                 })
+                this.close();
                 this.load = false;
             })
         },
-        createDataDetail() {
+        createDataDetail(id) {
             for (var i = 0; i < this.rows.length; i++) {
+                this.user.append('id_po', id);
                 this.user.append('id_produk[]', this.rows[i].id_produk);
-                this.user.append('id_order_restock[]', this.formDetail.id_order_restock);
-                this.user.append('jumlah[]', this.rows[i].jumlah);
-                this.user.append('subtotal[]', this.rows[i].subtotal);
+                this.user.append('jumlah[]', this.rows[i].jumlah);   
             }
             var uri = this.$apiUrl + '/detail-order-restock/'
             this.load = true
@@ -350,18 +389,44 @@ export default {
                 this.errors = error
                 this.$swal({
                     icon: 'error',
-                    title: 'Gagal menambah data!',
+                    // title: 'Gagal menambah data!',
+                    title: this.errors,
                     text: 'Coba lagi ..',
                     showConfirmButton: false,
-                    timer: 1500
+                    // timer: 1500
                 })
                 this.load = false;
             })
         },
-        updateData(id) {
-            var uri = this.$apiUrl + '/order-restock/' + id;
+        editHandler(item) {
+            this.typeInput = 'Ubah';
+            this.dialog = true;
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+item.id_transaksi
+                this.$http.get(uri).then(response => {
+                    var det = response.data
+                    this.editDetil.id_transaksi = det[0].id_transaksi
+                        this.formDetail.supplier = det[0].id_supplier
+
+                    for (var i = 0; i < det.length; i++) {
+                        this.rows[i].id_produk = det[i].id_produk
+                        this.rows[i].subtotal = det[i].subtotal
+                        this.addRow()
+                    }
+                    this.rows.splice(det.length, 2); 
+                })
+        },
+        updateDetail() {
+            for (var i = 0; i < this.rows.length; i++) {
+                if (this.checked){
+                    this.user.append('id_hewan', this.formDetail.id_hewan);
+                }
+                this.user.append('id_produk[]', this.rows[i].id_produk);
+                this.user.append('subtotal[]', this.rows[i].subtotal);   
+            }
+
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/' + this.editDetil.id_transaksi;
             this.load = true
-            this.$http.post(uri).then(response => {
+            this.$http.post(uri, this.user).then(response => {
                 this.$swal({
                     icon: 'success',
                     title: response.data.message,
@@ -372,6 +437,7 @@ export default {
                 this.close();
                 this.readData(); //refresh data ini 
                 this.resetForm();
+                this.typeInput = 'Tambah';
             }).catch(error => {
                 this.errors = error
                 this.$swal({
@@ -384,36 +450,153 @@ export default {
                 this.load = false;
             })
         },
+        updateData(id) {
+            var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
+            this.load = true
+            this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Apakah layanan ini benar benar sudah selesai??',
+                icon: 'warning',
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.$http.post(uri).then(response => {
+                        this.$swal({
+                            icon: 'success',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                        this.close();
+                        this.readData(); //refresh data ini 
+                        this.resetForm();
+                    }).catch(error => {
+                        this.errors = error
+                        this.$swal({
+                            icon: 'error',
+                            title: 'Gagal mengubah data!',
+                            text: 'Coba lagi ..',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                    })
+                }
+                this.load = false;
+            })
+        },
+        restoreList(){
+            var uri = this.$apiUrl + '/detail-transaksi-layanan/restore/'+this.editDetil.id_transaksi;
+                this.$http.get(uri).then(response => {
+                })
+            this.close()
+        },
+        deleteData(deleteId) {
+            //mengahapus data 
+            var uri = this.$apiUrl + '/order-restock/' + deleteId;
+            
+            this.$swal({
+                title: 'Apa kamu yakin??',
+                text: 'Hapus order restok ini!',
+                icon: 'warning',
+                cancelButtonColor: '#FF5252',
+                confirmButtonColor: '#BDBDBD',
+                cancelButtonText: 'Oke!',
+                confirmButtonText: 'Batal',
+                showCancelButton: true,
+                allowEscapeKey: false,
+                // reverseButtons: true,
+                allowOutsideClick: false,
+                dangerMode: true,
+            }).then((result) => {
+                if (!result.value) {
+                    this.$http.delete(uri).then(response => {
+                        this.$swal({
+                        text: response.data.message,
+                        icon: 'success',
+                        timer: 1500})
+                        this.readData();
+                    }).catch(error => {
+                    this.errors = error
+                    this.$swal({
+                        title: 'Gagal menghapus data!',
+                        text: 'Coba lagi ..',
+                        icon: 'error',
+                        });
+                    })
+                }
+            })
+        },
+        setForm() {
+            if (this.typeInput === 'Tambah') {
+                this.createData()
+            } else {
+                this.updateDetail()
+            }
+        },
         resetForm() {
-            this.form = {
-                id_supplier: '',
-                tanggal_restock: '',
-                total_bayar: '',
-                status_order: ''
-            }
+            this.changeId('-')
+            this.checked = false,
             this.formDetail= {
-                id_supplier: '',
-                id_order_restock: '',
-                    id_po: '',
-                    id_produk: '',
-                    jumlah: '',
-                    subtotal: ''
+                supplier: null,
             }
-            this.rows=[],
+            this.formDetail.supplier = null
+            // this.user.delete('id_hewan[]')
+            this.user.delete('id_produk[]')
+            this.user.delete('jumlah[]')
+
+            this.rows.length = 0
+            // this.rows[0].id_produk= ''
             this.rows= [
                 {
+                    'id_po': '',
                     'id_produk': '',
-                    'jumlah': '',
-                    'subtotal': ''
+                    'satuan': '',
+                    'jumlah': ''
                 }
             ]
+            this.suppliers = []
+            this.produk = []
+            // console.log(this.formDetail)
+            this.initData();
         },
+        getRole() {
+            return localStorage.getItem('role');
+        },
+        getUsername() {
+            return localStorage.getItem('username');
+        },
+        setSatuan(index) {
+            var uri = this.$apiUrl + '/produk/'+this.rows[index].id_produk
+            this.$http.get(uri).then(response => {
+                this.rows[index].satuan = response.data.satuan
+            })
+        },
+        initData() {
+            this.readData();
+            this.readDataSupplier();
+            this.readDataProduk();
+        }
+    },
+    watch: {
+        // 'formDetail.supplier': function () {
+        //     var uri = this.$apiUrl + '/hewan/nya/'+this.formDetail.supplier;
+        //         this.$http.get(uri).then(response => {
+        //             this.hewanSiapa = response.data
+        //             // console.log(response.data)
+        //         })
+        // },
     },
     mounted() {
-        this.readData();
-        this.readDataProduk();
-        this.readDataSupplier();
-        this.lastObject();
+        this.initData()
     },
 }
 </script>
