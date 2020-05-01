@@ -21,48 +21,60 @@
                     </v-card-title>
                     <v-card-text>
                         <v-container>
-                            <v-row>
-                                <v-col cols="6" md="12">
-                                    <v-autocomplete
-                                        v-model="formDetail.supplier"
-                                        :items="suppliers"
-                                        item-value="id"
-                                        item-text="nama"
-                                        label="Supplier"
-                                        required
-                                        hide-selected
-                                        clearable>
-                                    </v-autocomplete>
-                                </v-col>
-                            </v-row>
-                            <div v-for="(row, index) in rows" v-bind:key="index">
-                                <v-row>
-                                    <v-col cols="6" md="4">
-                                        <v-autocomplete
-                                            v-model="row.id_produk"
-                                            :items="produk"
-                                            item-value="id"
-                                            item-text="nama"
-                                            label="Produk"
-                                            required
-                                            hide-selected
-                                            clearable
-                                            @change="setSatuan(index)">
-                                        </v-autocomplete>
-                                    </v-col>
-                                    <v-col cols="6" md="4">
-                                        <v-text-field v-model="row.satuan" label="Satuan" readonly required></v-text-field>
-                                    </v-col>
-                                    <v-col cols="6" md="3">
-                                        <v-text-field v-model="row.jumlah" label="Jumlah" type="number" required></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="1">
-                                        <v-btn icon color="amber darken-4" @click="deleteRow(index)">
-                                            <v-icon>mdi-window-close</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-                            </div>    
+                            <ValidationObserver ref="observer" v-slot="{ }">
+                                <v-form>
+                                    <v-row>
+                                        <v-col cols="6" md="12">
+                                            <ValidationProvider v-slot="{ errors }" name="Supplier" rules="required">
+                                                <v-autocomplete
+                                                    v-model="formDetail.supplier"
+                                                    :items="suppliers"
+                                                    :error-messages="errors"
+                                                    item-value="id"
+                                                    item-text="nama"
+                                                    label="Supplier"
+                                                    required
+                                                    hide-selected
+                                                    clearable>
+                                                </v-autocomplete>
+                                            </ValidationProvider>
+                                        </v-col>
+                                    </v-row>
+                                    <div v-for="(row, index) in rows" v-bind:key="index">
+                                        <v-row>
+                                            <v-col cols="6" md="4">
+                                                <ValidationProvider v-slot="{ errors }" name="Produk" rules="required">
+                                                    <v-autocomplete
+                                                        v-model="row.id_produk"
+                                                        :items="produk"
+                                                        :error-messages="errors"
+                                                        item-value="id"
+                                                        item-text="nama"
+                                                        label="Produk"
+                                                        required
+                                                        hide-selected
+                                                        clearable
+                                                        @change="setSatuan(index)">
+                                                    </v-autocomplete>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="6" md="4">
+                                                    <v-text-field v-model="row.satuan" label="Satuan"  readonly required></v-text-field>
+                                            </v-col>
+                                            <v-col cols="6" md="3">
+                                                <ValidationProvider v-slot="{ errors }" name="Jumlah" rules="required">
+                                                <v-text-field v-model="row.jumlah" label="Jumlah" type="number" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" md="1">
+                                                <v-btn icon color="amber darken-4" @click="deleteRow(index)">
+                                                    <v-icon>mdi-window-close</v-icon>
+                                                </v-btn>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                </v-form>
+                            </ValidationObserver>
                         </v-container>
                     </v-card-text>
                     <v-card-actions>
@@ -184,10 +196,20 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Detail from "./detailController";
+import { required } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
 
 export default {
     components: {
-        Detail
+        Detail,
+        ValidationProvider,
+        ValidationObserver,
     },
     data() {
         return {
@@ -534,11 +556,14 @@ export default {
                 }
             })
         },
-        setForm() {
-            if (this.typeInput === 'Tambah') {
-                this.createData()
-            } else {
-                this.updateDetail()
+        async setForm() {
+            const isValid = await this.$refs.observer.validate();
+            if(isValid){
+                if (this.typeInput === 'Tambah') {
+                    this.createData()
+                } else {
+                    this.updateData()
+                }
             }
         },
         resetForm() {
@@ -566,6 +591,9 @@ export default {
             this.produk = []
             // console.log(this.formDetail)
             this.initData();
+            
+            this.checked = false
+            this.$refs.observer.reset()
         },
         getRole() {
             return localStorage.getItem('role');

@@ -23,14 +23,14 @@
                             <v-container>
                                 <ValidationObserver ref="observer" v-slot="{ }">
                                     <v-form>
-                                <v-row>
-                                    <ValidationProvider v-slot="{ errors }" name="Nama Ukuran" rules="required">
-                                        <v-col cols="12" sm="12" md="12">
-                                            <v-text-field v-model="form.nama" label="Nama Ukuran" :error-messages="errors" required></v-text-field>
-                                        </v-col>
-                                    </ValidationProvider>
-                                </v-row>
-                                </v-form>
+                                        <v-row>
+                                            <ValidationProvider v-slot="{ errors }" name="Nama Ukuran" rules="required">
+                                                <v-col cols="12" sm="12" md="12">
+                                                    <v-text-field v-model="form.nama" label="Nama Ukuran" :error-messages="errors" required></v-text-field>
+                                                </v-col>
+                                            </ValidationProvider>
+                                        </v-row>
+                                    </v-form>
                                 </ValidationObserver>
                             </v-container>
                         </v-card-text>
