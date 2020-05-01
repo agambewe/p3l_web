@@ -401,15 +401,16 @@ export default {
         editHandler(item) {
             this.typeInput = 'Ubah';
             this.dialog = true;
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+item.id_transaksi
+            var uri = this.$apiUrl + '/detail-order-restock/po/'+item.id_po
                 this.$http.get(uri).then(response => {
                     var det = response.data
-                    this.editDetil.id_transaksi = det[0].id_transaksi
-                        this.formDetail.supplier = det[0].id_supplier
+                    this.editDetil.id_po = det[0].id_po
+                    this.formDetail.supplier = det[0].supplier.id
 
                     for (var i = 0; i < det.length; i++) {
                         this.rows[i].id_produk = det[i].id_produk
-                        this.rows[i].subtotal = det[i].subtotal
+                        this.rows[i].satuan = det[i].produk.satuan
+                        this.rows[i].jumlah = det[i].jumlah
                         this.addRow()
                     }
                     this.rows.splice(det.length, 2); 
@@ -417,14 +418,12 @@ export default {
         },
         updateDetail() {
             for (var i = 0; i < this.rows.length; i++) {
-                if (this.checked){
-                    this.user.append('id_hewan', this.formDetail.id_hewan);
-                }
+                this.user.append('id_supplier', this.formDetail.supplier);
                 this.user.append('id_produk[]', this.rows[i].id_produk);
-                this.user.append('subtotal[]', this.rows[i].subtotal);   
+                this.user.append('jumlah[]', this.rows[i].jumlah);   
             }
 
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/' + this.editDetil.id_transaksi;
+            var uri = this.$apiUrl + '/detail-order-restock/' + this.editDetil.id_po;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.$swal({
@@ -451,11 +450,11 @@ export default {
             })
         },
         updateData(id) {
-            var uri = this.$apiUrl + '/order-layanan/selesai-layanan/' + id;
+            var uri = this.$apiUrl + '/order-restock/selesai-restock/' + id;
             this.load = true
             this.$swal({
                 title: 'Apa kamu yakin??',
-                text: 'Apakah layanan ini benar benar sudah selesai??',
+                text: 'Apakah restok ini benar benar sudah selesai??',
                 icon: 'warning',
                 cancelButtonColor: '#FF5252',
                 confirmButtonColor: '#BDBDBD',
