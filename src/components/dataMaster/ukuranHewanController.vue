@@ -21,11 +21,17 @@
                         </v-card-title>
                         <v-card-text>
                             <v-container>
+                                <ValidationObserver ref="observer" v-slot="{ }">
+                                    <v-form>
                                 <v-row>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="form.nama" label="Nama Ukuran"></v-text-field>
-                                    </v-col>
+                                    <ValidationProvider v-slot="{ errors }" name="Nama Ukuran" rules="required">
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-text-field v-model="form.nama" label="Nama Ukuran" :error-messages="errors" required></v-text-field>
+                                        </v-col>
+                                    </ValidationProvider>
                                 </v-row>
+                                </v-form>
+                                </ValidationObserver>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
@@ -121,7 +127,19 @@
 </style>
 
 <script>
+    import { required, max } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
     export default {
+        components: {
+            ValidationProvider,
+            ValidationObserver,
+        },
         data() {
             return {
                 load: false,
@@ -170,6 +188,9 @@
             },
         },
         methods: {
+            validate () {
+                this.$refs.form.validate()
+            },
             close() {
                 this.dialog = false
                 this.typeInput = 'Tambah';
@@ -295,17 +316,21 @@
                     }
                 })
             },
-            setForm() {
-                if (this.typeInput === 'Tambah') {
-                    this.createData()
-                } else {
-                    this.updateData()
+            async setForm() {
+                const isValid = await this.$refs.observer.validate();
+                if(isValid){
+                    if (this.typeInput === 'Tambah') {
+                        this.createData()
+                    } else {
+                        this.updateData()
+                    }
                 }
             },
             resetForm() {
                 this.form = {
                     nama: '',
                 }
+                this.$refs.observer.reset()
             },
         },
         mounted() {
