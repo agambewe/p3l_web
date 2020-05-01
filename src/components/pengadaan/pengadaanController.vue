@@ -298,7 +298,7 @@ export default {
         deleteRowApi(r) {
             this.user.append('index', r);
 
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/transaksi/'+this.editDetil.id_transaksi;
+            var uri = this.$apiUrl + '/detail-order-restock/po/'+this.editDetil.id_po;
             this.load = true
             this.$http.post(uri, this.user).then(response => {
                 this.load = false;
@@ -493,7 +493,7 @@ export default {
             })
         },
         restoreList(){
-            var uri = this.$apiUrl + '/detail-transaksi-layanan/restore/'+this.editDetil.id_transaksi;
+            var uri = this.$apiUrl + '/detail-order-restock/restore/'+this.editDetil.id_po;
                 this.$http.get(uri).then(response => {
                 })
             this.close()
