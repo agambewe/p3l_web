@@ -33,9 +33,11 @@
                                                     item-value="id"
                                                     item-text="nama"
                                                     label="Supplier"
+                                                    ref="supplierac"
                                                     required
                                                     hide-selected
-                                                    clearable>
+                                                    clearable
+                                                    @change="resetAutocomplete">
                                                 </v-autocomplete>
                                             </ValidationProvider>
                                         </v-col>
@@ -51,6 +53,7 @@
                                                         item-value="id"
                                                         item-text="nama"
                                                         label="Produk"
+                                                        ref="produkac"
                                                         required
                                                         hide-selected
                                                         clearable
@@ -568,6 +571,7 @@ export default {
         },
         resetForm() {
             this.changeId('-')
+            this.resetAutocomplete()
             this.checked = false,
             this.formDetail= {
                 supplier: null,
@@ -578,15 +582,15 @@ export default {
             this.user.delete('jumlah[]')
 
             this.rows.length = 0
+            // this.rows= [
+            //     {
+            //         'id_po': '',
+            //         'id_produk': '',
+            //         'satuan': '',
+            //         'jumlah': ''
+            //     }
+            // ]
             // this.rows[0].id_produk= ''
-            this.rows= [
-                {
-                    'id_po': '',
-                    'id_produk': '',
-                    'satuan': '',
-                    'jumlah': ''
-                }
-            ]
             this.suppliers = []
             this.produk = []
             // console.log(this.formDetail)
@@ -606,6 +610,11 @@ export default {
             this.$http.get(uri).then(response => {
                 this.rows[index].satuan = response.data.satuan
             })
+        },
+        resetAutocomplete(){
+            this.$refs.produkac.lazySearch = ''
+            this.$refs.supplierac.lazySearch = ''
+            if(this.rows.length==0) this.addRow()
         },
         initData() {
             this.readData();
