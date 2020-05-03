@@ -1,13 +1,19 @@
 <template>
 <v-container dark>
     <v-container grid-list-md mb-0>
-        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Data Produk</h1>
+        <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">{{ typeHeader }}</h1>
         <v-layout row wrap style="margin:10px">
             <v-dialog v-model="dialog" persistent max-width="500px">
                 <template v-slot:activator="{ on }">
                     <v-flex class="flex" xs8 style="float:right;widht:300">
                         <v-btn class="mx-2" fab color="blue lighten-1" v-on="on" @click="clear()">
                             <v-icon dark>mdi-plus</v-icon>
+                        </v-btn>
+                        <v-btn v-if="typeHeader=='Data Produk'" class="mx-2" color="blue lighten-3" @click="readMinimal()">
+                            Minimal
+                        </v-btn>
+                        <v-btn v-else class="mx-2" color="blue lighten-3" @click="readData()">
+                            Semua
                         </v-btn>
                     </v-flex>
                     <v-divider class="mx-1" inset vertical></v-divider>
@@ -197,6 +203,7 @@ export default {
             checked_img: false,
             checked: false,
             typeInput: 'Tambah',
+            typeHeader: 'Data Produk',
             keyword: '',
             headers: [{
                     text: 'Aksi',
@@ -268,6 +275,9 @@ export default {
         formTitle() {
             return this.typeInput
         },
+        headerTitle() {
+            return this.typeHeader
+        },
     },
     watch: {},
     methods: {
@@ -308,6 +318,14 @@ export default {
             var uri = this.$apiUrl + '/produk/'
             this.$http.get(uri).then(response => {
                 this.produk = response.data
+                this.typeHeader='Data Produk'
+            })
+        },
+        readMinimal() {
+            var uri = this.$apiUrl + '/produk-min/'
+            this.$http.get(uri).then(response => {
+                this.produk = response.data
+                this.typeHeader='Data Produk Minimal'
             })
         },
         createData() {

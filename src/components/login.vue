@@ -155,9 +155,20 @@ export default {
                             })
                             this.load = false;
                             this.clear();
-                            this.$router.push({
+                            var role = localStorage.getItem('role')
+                            if(role=='OWNER'){
+                                this.$router.push({
                                 name: 'PegawaiController'
-                            })
+                                })
+                            }else if(role=='CS'){
+                                this.$router.push({
+                                name: 'TlayananControllerCS'
+                                })
+                            }else{
+                                this.$router.push({
+                                name: 'TlayananControllerKASIR'
+                                })
+                            }
                         }
                     }).catch(error => {
                         console.log(error)
