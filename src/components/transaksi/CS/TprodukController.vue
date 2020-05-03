@@ -21,67 +21,80 @@
                     </v-card-title>
                     <v-card-text>
                         <v-container>
-                            <div v-if="typeInput === 'Tambah'">
-                                <label >Member ? </label>
-                                    <input type="checkbox" id="checkbox" v-model="checked">
-                            </div>
-                            <v-row v-if="!checked">
-                            </v-row>
-                            <v-row v-else>
-                                <v-col cols="6" md="12">
-                                    <v-autocomplete
-                                        v-model="formDetail.customer"
-                                        :items="customers"
-                                        item-value="id"
-                                        item-text="nama"
-                                        label="Customer"
-                                        required
-                                        hide-selected
-                                        clearable>
-                                    </v-autocomplete>
-                                </v-col>
-                                <v-col cols="6" md="12">
-                                    <v-autocomplete
-                                        v-model="formDetail.id_hewan"
-                                        :items="hewanSiapa"
-                                        no-data-text="Customer ini belum punya hewan"
-                                        item-value="id"
-                                        item-text="nama"
-                                        label="Hewan"
-                                        required
-                                        hide-selected
-                                        clearable>
-                                    </v-autocomplete>
-                                </v-col>
-                            </v-row>
-                            <div v-for="(row, index) in rows" v-bind:key="index">
-                                <v-row>
-                                    <v-col cols="6" md="4">
-                                        <v-autocomplete
-                                            v-model="row.id_produk"
-                                            :items="produk"
-                                            item-value="id"
-                                            item-text="nama"
-                                            label="Produk"
-                                            required
-                                            hide-selected
-                                            clearable
-                                            @change="setSubtotal(index)">
-                                        </v-autocomplete>
+                            <ValidationObserver ref="observer" v-slot="{ }">
+                                <div v-if="typeInput === 'Tambah'">
+                                    <label >Member ? </label>
+                                        <input type="checkbox" id="checkbox" v-model="checked">
+                                </div>
+                                <v-row v-if="!checked">
+                                </v-row>
+                                <v-row v-else>
+                                    <v-col cols="6" md="12">
+                                        <ValidationProvider v-slot="{ errors }" name="Customer" rules="required">
+                                            <v-autocomplete
+                                                v-model="formDetail.customer"
+                                                :items="customers"
+                                                :error-messages="errors"
+                                                item-value="id"
+                                                item-text="nama"
+                                                label="Customer"
+                                                required
+                                                hide-selected
+                                                clearable>
+                                            </v-autocomplete>
+                                        </ValidationProvider>
                                     </v-col>
-                                    <v-col cols="6" md="3">
-                                        <v-text-field v-model="row.jumlah" label="jumlah" type="number" required @change="setSubtotal(index)"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="6" md="4">
-                                        <v-text-field v-model="row.subtotal" label="Harga" readonly required></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" md="1">
-                                        <v-btn icon color="amber darken-4" @click="deleteRow(index)">
-                                            <v-icon>mdi-window-close</v-icon>
-                                        </v-btn>
+                                    <v-col cols="6" md="12">
+                                        <ValidationProvider v-slot="{ errors }" name="Hewan" rules="required">
+                                            <v-autocomplete
+                                                v-model="formDetail.id_hewan"
+                                                :items="hewanSiapa"
+                                                :error-messages="errors"
+                                                no-data-text="Customer ini belum punya hewan"
+                                                item-value="id"
+                                                item-text="nama"
+                                                label="Hewan"
+                                                required
+                                                hide-selected
+                                                clearable>
+                                            </v-autocomplete>
+                                        </ValidationProvider>
                                     </v-col>
                                 </v-row>
-                            </div>    
+                                <div v-for="(row, index) in rows" v-bind:key="index">
+                                    <v-row>
+                                        <v-col cols="6" md="4">
+                                            <ValidationProvider v-slot="{ errors }" name="Produk" rules="required">
+                                                <v-autocomplete
+                                                    v-model="row.id_produk"
+                                                    :items="produk"
+                                                    :error-messages="errors"
+                                                    item-value="id"
+                                                    item-text="nama"
+                                                    label="Produk"
+                                                    required
+                                                    hide-selected
+                                                    clearable
+                                                    @change="setSubtotal(index)">
+                                                </v-autocomplete>
+                                            </ValidationProvider>
+                                        </v-col>
+                                        <v-col cols="6" md="3">
+                                            <ValidationProvider v-slot="{ errors }" name="jumlah" rules="required|min_value:1">
+                                            <v-text-field v-model="row.jumlah" label="jumlah" type="number" :error-messages="errors" required @change="setSubtotal(index)"></v-text-field>
+                                            </ValidationProvider>
+                                        </v-col>
+                                        <v-col cols="6" md="4">
+                                            <v-text-field v-model="row.subtotal" label="Harga" readonly required></v-text-field>
+                                        </v-col>
+                                        <v-col cols="12" md="1">
+                                            <v-btn icon color="amber darken-4" @click="deleteRow(index)">
+                                                <v-icon>mdi-window-close</v-icon>
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </div>    
+                            </ValidationObserver>
                         </v-container>
                     </v-card-text>
                     <v-card-actions>
@@ -191,10 +204,24 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Detail from "./DprodukController";
+import { required, min_value } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
+    extend('min_value', {
+        ...min_value,
+        message: '{_field_} tidak boleh nol atau minus.',
+    })
 
 export default {
     components: {
-        Detail
+        Detail,
+        ValidationProvider,
+        ValidationObserver,
     },
     data() {
         return {
@@ -575,11 +602,14 @@ export default {
                 }
             })
         },
-        setForm() {
-            if (this.typeInput === 'Tambah') {
-                this.createData()
-            } else {
-                this.updateDetail()
+        async setForm() {
+            const isValid = await this.$refs.observer.validate();
+            if(isValid){
+                if (this.typeInput === 'Tambah') {
+                    this.createData()
+                } else {
+                    this.updateData()
+                }
             }
         },
         resetForm() {
@@ -606,6 +636,8 @@ export default {
             this.hewanSiapa = []
             this.produk = []
             this.initData();
+
+            this.$refs.observer.reset()
         },
         getRole() {
             return localStorage.getItem('role');
