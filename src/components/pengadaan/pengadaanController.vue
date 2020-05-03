@@ -62,7 +62,7 @@
                                                     <v-text-field v-model="row.satuan" label="Satuan"  readonly required></v-text-field>
                                             </v-col>
                                             <v-col cols="6" md="3">
-                                                <ValidationProvider v-slot="{ errors }" name="Jumlah" rules="required">
+                                                <ValidationProvider v-slot="{ errors }" name="Jumlah" min="1" rules="required|min_value:1">
                                                 <v-text-field v-model="row.jumlah" label="Jumlah" type="number" :error-messages="errors" required></v-text-field>
                                                 </ValidationProvider>
                                             </v-col>
@@ -196,13 +196,17 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Detail from "./detailController";
-import { required } from 'vee-validate/dist/rules'
+import { required, min_value } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
     setInteractionMode('eager')
 
     extend('required', {
         ...required,
         message: '{_field_} tidak boleh kosong.',
+    })
+    extend('min_value', {
+        ...min_value,
+        message: '{_field_} tidak boleh nol atau minus.',
     })
 
 export default {
@@ -591,8 +595,7 @@ export default {
             this.produk = []
             // console.log(this.formDetail)
             this.initData();
-            
-            this.checked = false
+
             this.$refs.observer.reset()
         },
         getRole() {
