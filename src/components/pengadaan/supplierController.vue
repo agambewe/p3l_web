@@ -21,17 +21,27 @@
                         </v-card-title>
                         <v-card-text>
                             <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="form.nama" label="Nama"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="12">
-                                        <v-text-field type="number" v-model="form.telepon" label="Telepon"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-textarea v-model="form.alamat" label="Alamat"></v-textarea>
-                                    </v-col>
-                                </v-row>
+                                <ValidationObserver ref="observer" v-slot="{ }">
+                                    <v-form>
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <ValidationProvider v-slot="{ errors }" name="Nama" rules="required">
+                                                    <v-text-field v-model="form.nama" label="Nama" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="Telepon" rules="required|integer">
+                                                    <v-text-field v-model="form.telepon" label="Telepon" :error-messages="errors" required></v-text-field>
+                                                </ValidationProvider>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <ValidationProvider v-slot="{ errors }" name="Alamat" rules="required">
+                                                    <v-textarea v-model="form.alamat" label="Alamat" :error-messages="errors" required></v-textarea>
+                                                </ValidationProvider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-form>
+                                </ValidationObserver>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
@@ -102,7 +112,23 @@
 </style>
 
 <script>
+    import { required, integer } from 'vee-validate/dist/rules'
+    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+    setInteractionMode('eager')
+
+    extend('required', {
+        ...required,
+        message: '{_field_} tidak boleh kosong.',
+    })
+    extend('integer', {
+        ...integer,
+        message: '{_field_} harus berupa angka.',
+    })
     export default {
+        components: {
+            ValidationProvider,
+            ValidationObserver,
+        },
         data() {
             return {
                 load: false,
@@ -283,11 +309,14 @@
                     }
                 })
             },
-            setForm() {
-                if (this.typeInput === 'Tambah') {
-                    this.createData()
-                } else {
-                    this.updateData()
+            async setForm() {
+                const isValid = await this.$refs.observer.validate();
+                if(isValid){
+                    if (this.typeInput === 'Tambah') {
+                        this.createData()
+                    } else {
+                        this.updateData()
+                    }
                 }
             },
             resetForm() {
@@ -296,6 +325,8 @@
                     telepon: '',
                     alamat: ''
                 }
+                this.checked = false
+                this.$refs.observer.reset()
             },
         },
         mounted() {
