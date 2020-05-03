@@ -209,7 +209,7 @@ export default {
                 },
                 {
                     text: 'ID PO',
-                    value: 'id'
+                    value: 'id_po'
                 },
                 {
                     text: 'Supplier',
