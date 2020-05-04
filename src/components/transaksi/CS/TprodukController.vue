@@ -614,6 +614,7 @@ export default {
         },
         resetForm() {
             this.changeId('-')
+            this.checked = false,
             this.formDetail= {
                 customer: '',
                 id_hewan: '',
@@ -637,7 +638,9 @@ export default {
             this.produk = []
             this.initData();
 
-            this.$refs.observer.reset()
+            if(this.checked){
+                this.$refs.observer.reset()
+            }
         },
         getRole() {
             return localStorage.getItem('role');
