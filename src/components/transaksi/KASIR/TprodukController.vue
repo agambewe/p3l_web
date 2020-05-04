@@ -159,7 +159,7 @@
                             {{ item.total_harga }}
                         </td>
                         <td>
-                            <v-btn x-small color="red lighten-2" v-if="item.status_bayar==0" @click="inputDiskon(item.id)">
+                            <v-btn x-small color="red lighten-2" v-if="item.status_bayar==0" @click="inputDiskon(item)">
                                 Belum dibayar
                             </v-btn>
                             <v-btn x-small color="green lighten-2" v-else @click="showDiskon(item.diskon)">
@@ -424,9 +424,41 @@ export default {
             this.typeInput = 'Lihat';
             this.form.diskon = id;
         },
-        inputDiskon(id){
-            this.dialog=true;
-            this.form.id = id;
+        inputDiskon(item){
+            var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+item.id_transaksi
+                this.$http.get(uri).then(response => {
+                    var det = response.data
+                    if(!!det[0].hewan){
+                        this.dialog=true;
+                    }else{
+                        this.user.append('kasir', this.getUsername());
+
+                        var uri = this.$apiUrl + '/bayar-produk/bayar-produk/' + item.id;
+                        this.$http.post(uri, this.user).then(response => {
+                        this.$swal({
+                            icon: 'success',
+                            title: response.data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        this.load = false;
+                        this.close();
+                        this.readData(); //refresh data ini 
+                        this.resetForm();
+                        }).catch(error => {
+                            this.errors = error
+                            this.$swal({
+                                icon: 'error',
+                                title: 'Gagal mengubah data!',
+                                text: 'Coba lagi ..',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            this.load = false;
+                        })
+                    }
+                })
+            this.form.id = item.id;
         },
         editHandler(item) {
             this.dialogEdit = true;

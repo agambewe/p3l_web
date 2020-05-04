@@ -620,8 +620,9 @@ export default {
             this.layanan = []
             // console.log(this.formDetail)
             this.initData();
-
-            this.$refs.observer.reset()
+            if(this.checked){
+                this.$refs.observer.reset()
+            }
         },
         getRole() {
             return localStorage.getItem('role');
