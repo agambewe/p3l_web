@@ -60,7 +60,7 @@
                                 <tbody>
                                     <ul>
                                         <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
-                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah?this.detail.diubah:'-' }}</ul>
                                     </ul>
                                 </tbody>
                             </v-container>
