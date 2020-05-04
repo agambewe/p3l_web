@@ -589,7 +589,7 @@ export default {
                 if (this.typeInput === 'Tambah') {
                     this.createData()
                 } else {
-                    this.updateData()
+                    this.updateDetail()
                 }
             }
         },

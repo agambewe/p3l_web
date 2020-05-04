@@ -569,7 +569,7 @@ export default {
                 if (this.typeInput === 'Tambah') {
                     this.createData()
                 } else {
-                    this.updateData()
+                    this.updateDetail()
                 }
             }
         },
@@ -586,14 +586,14 @@ export default {
             this.user.delete('jumlah[]')
 
             this.rows.length = 0
-            // this.rows= [
-            //     {
-            //         'id_po': '',
-            //         'id_produk': '',
-            //         'satuan': '',
-            //         'jumlah': ''
-            //     }
-            // ]
+            this.rows= [
+                {
+                    'id_po': '',
+                    'id_produk': '',
+                    'satuan': '',
+                    'jumlah': ''
+                }
+            ]
             // this.rows[0].id_produk= ''
             this.suppliers = []
             this.produk = []
@@ -617,7 +617,7 @@ export default {
         resetAutocomplete(){
             this.$refs.produkac.lazySearch = ''
             this.$refs.supplierac.lazySearch = ''
-            if(this.rows.length==0) this.addRow()
+            // if(this.rows.length==0) this.addRow()
         },
         initData() {
             this.readData();
