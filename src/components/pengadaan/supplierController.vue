@@ -51,13 +51,36 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogDetail" max-width="528px">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline text-md-center">Detail Data {{ this.detail.nama }}</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <tbody>
+                                <ul>
+                                    <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                    <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah?this.detail.diubah:'-' }}</ul>
+                                </ul>
+                            </tbody>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             </v-layout>
-            <v-data-table :headers="headers" :items-per-page="5" :items="supplier" :search="keyword" :loading="load" no-data-text="Data kosong" light>
+            <v-data-table :headers="headers" :items-per-page="5" :items="supplier" :sort-by="'updated_at'" :sort-desc="true" :search="keyword" :loading="load" no-data-text="Data kosong" light>
                 <template v-slot:body="{ items }">
                     <tbody v-if="items.length!=0">
                         <tr v-for="item in items" :key="item.id">
                             <td >
                                 <div class="flex">
+                                    <v-btn icon color="blue lighten-2" @click="readDetail(item)">
+                                        <v-icon>mdi-arrow-down</v-icon>
+                                    </v-btn>    
                                     <v-btn icon color="amber accent-3" @click="editHandler(item)">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
@@ -69,8 +92,8 @@
                             <td>{{ item.nama }}</td>
                             <td>{{ item.telepon }}</td>
                             <td>{{ item.alamat }}</td>
-                            <td>{{ item.created_at}}</td>
-                            <td>{{ item.updated_at }}</td>
+                            <!--<td>{{ item.created_at}}</td>
+                            <td>{{ item.updated_at }}</td> -->
                         </tr>
                     </tbody>
                     <tbody v-else>
@@ -133,6 +156,7 @@
             return {
                 load: false,
                 dialog: false,
+                dialogDetail: false,
                 typeInput: 'Tambah',
                 keyword: '',
                 headers: [
@@ -153,20 +177,25 @@
                         text: 'Tanggal Lahir',
                         value: 'tanggal_lahir'
                     },
-                    {
-                        text: 'Dibuat pada',
-                        value: 'created_at'
-                    },
-                    {
-                        text: 'Diubah pada',
-                        value: 'updated_at'
-                    }
+                    //{
+                      //  text: 'Dibuat pada',
+                        //value: 'created_at'
+                    //},
+                    //{
+                      //  text: 'Diubah pada',
+                        //value: 'updated_at'
+                    //}
                 ],
                 supplier: [],
                 form: {
                     nama: '',
                     telepon: '',
                     alamat: '',
+                },
+                detail: {
+                    nama: '',
+                    diubah: '',
+                    dibuat: '',
                 },
                 updatedId: '',
                 errors: '',
@@ -195,6 +224,12 @@
             },
             clear() {
                 this.resetForm();
+            },
+            readDetail(item) {
+                this.dialogDetail = true
+                this.detail.nama = item.nama
+                this.detail.dibuat = item.created_at
+                this.detail.diubah = item.updated_at
             },
             readData() {
                 var uri = this.$apiUrl + '/supplier/'
