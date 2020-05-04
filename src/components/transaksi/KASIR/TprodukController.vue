@@ -94,8 +94,8 @@
                                             </ValidationProvider>
                                         </v-col>
                                         <v-col cols="6" md="3">
-                                            <ValidationProvider v-slot="{ errors }" name="jumlah" rules="required|min_value:1|max_value:5">
-                                                <v-text-field v-model="row.jumlah" label="jumlah" type="number" :error-messages="errors" required @change="setSubtotal(index)"></v-text-field>
+                                            <ValidationProvider v-slot="{ errors }" name="jumlah" :rules="`required|min_value:1|max_value:${row.max}`">
+                                                <v-text-field v-model="row.jumlah" :hint="row.max+' produk tersedia'" label="jumlah" type="number" :error-messages="errors" required @change="setSubtotal(index)"></v-text-field>
                                             </ValidationProvider>
                                         </v-col>
                                         <v-col cols="6" md="4">
@@ -240,7 +240,7 @@ import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
     })
     extend('max_value', {
         ...max_value,
-        message: '{_field_} pemesanan produk dibatasi.',
+        message: '{_field_} produk melebihi stok.',
     })
 
 export default {
@@ -286,6 +286,7 @@ export default {
             produk: [],
             rows: [
                 {
+                    'max': '',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',
@@ -331,6 +332,7 @@ export default {
         addRow: function() {
             this.rows.push(
                 {
+                    'max': '',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',
@@ -631,6 +633,7 @@ export default {
             this.rows.length = 0
             this.rows= [
                 {
+                    'max': '',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',
@@ -667,6 +670,7 @@ export default {
                 }
                 if(response.data.harga){
                     this.rows[index].subtotal = this.rows[index].jumlah*response.data.harga
+                    this.rows[index].max = response.data.stok
                 }
             })
         },

@@ -21,7 +21,7 @@
                                 <td>{{ index+1 }}</td>
                                 <td>{{ item.produk.nama }}</td>
                                 <td>{{ item.jumlah }}</td>
-                                <td>{{ item.subtotal }}</td>
+                                <td>{{ rubah(item.subtotal) }}</td>
                             </tr>
                         </tbody>
                         <tbody v-else>
@@ -138,6 +138,13 @@ export default {
                 this.$http.get(uri).then(response => {
                     this.hewan = response.data
                 })
+            },
+            rubah(angka){
+                var explode = angka.split(".");
+                var reverse = explode[0].toString().split('').reverse().join(''),
+                ribuan = reverse.match(/\d{1,3}/g);
+                ribuan = ribuan.join('.').split('').reverse().join('');
+                return ribuan;
             },
             clear(){
             }
