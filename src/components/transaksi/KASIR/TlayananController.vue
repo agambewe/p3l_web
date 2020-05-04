@@ -634,7 +634,9 @@ export default {
             }
             this.initData();
 
-            this.$refs.observer.reset()
+            if(this.checked){
+                this.$refs.observer.reset()
+            }
         },
         getRole() {
             return localStorage.getItem('role');
@@ -663,6 +665,9 @@ export default {
                     // console.log(response.data)
                 })
         },
+    },
+    created() {
+        this.initData()
     },
     mounted() {
         this.initData()

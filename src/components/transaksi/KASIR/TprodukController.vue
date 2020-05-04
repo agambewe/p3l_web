@@ -464,6 +464,7 @@ export default {
                 })
             this.form.id = item.id;
         },
+
         editHandler(item) {
             this.dialogEdit = true;
             var uri = this.$apiUrl + '/detail-transaksi-produk/transaksi/'+item.id_transaksi
@@ -646,7 +647,9 @@ export default {
             }
             this.initData();
 
-            this.$refs.observer.reset()
+            if(this.checked){
+                this.$refs.observer.reset()
+            }
         },
         getRole() {
             return localStorage.getItem('role');
