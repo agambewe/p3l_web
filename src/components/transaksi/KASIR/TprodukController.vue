@@ -94,7 +94,7 @@
                                             </ValidationProvider>
                                         </v-col>
                                         <v-col cols="6" md="3">
-                                            <ValidationProvider v-slot="{ errors }" name="jumlah" rules="required|min_value:1">
+                                            <ValidationProvider v-slot="{ errors }" name="jumlah" rules="required|min_value:1|max_value:5">
                                                 <v-text-field v-model="row.jumlah" label="jumlah" type="number" :error-messages="errors" required @change="setSubtotal(index)"></v-text-field>
                                             </ValidationProvider>
                                         </v-col>
@@ -222,7 +222,7 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Detail from "./DprodukController";
-import { required, min_value, min } from 'vee-validate/dist/rules'
+import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
     setInteractionMode('eager')
 
@@ -237,6 +237,10 @@ import { required, min_value, min } from 'vee-validate/dist/rules'
     extend('min_value_diskon', {
         ...min_value,
         message: '{_field_} tidak boleh minus.',
+    })
+    extend('max_value', {
+        ...max_value,
+        message: '{_field_} pemesanan produk dibatasi.',
     })
 
 export default {
