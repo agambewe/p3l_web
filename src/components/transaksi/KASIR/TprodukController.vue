@@ -126,11 +126,23 @@
                                     <ul>
                                         <Detail></Detail>
                                     </ul>
+                                    <ul>
+                                        <label><strong>Lihat log? </strong></label>
+                                        <input type="checkbox" id="checkbox" v-model="checkedLog">
+                                    </ul>
+                                    <ul v-if="!checkedLog">
+                                    </ul>
+                                    <ul v-else>
+                                        <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                        <ul># <strong>Dibuat oleh : </strong>{{ this.detail.dibuatoleh }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah?this.detail.diubah:'-' }}</ul>
+                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh?this.detail.diubaholeh:'-' }}</ul>
+                                    </ul>
                                 </tbody>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="clear">Tutup</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -256,6 +268,7 @@ export default {
             dialogEdit: false,
             dialogDetail: false,
             checked: false,
+            checkedLog: false,
             typeInput: 'Masukkan',
             keyword: '',
             headers: [{
@@ -286,7 +299,7 @@ export default {
             produk: [],
             rows: [
                 {
-                    'max': '',
+                    'max': '5',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',
@@ -294,6 +307,12 @@ export default {
                     'subtotal': ''
                 }
             ],
+            detail: {
+                    diubah: '',
+                    diubaholeh: '',
+                    dibuat: '',
+                    dibuatoleh: '',
+                },
             formDetail: {
                 customer: '',
                 id_hewan: '',
@@ -332,7 +351,7 @@ export default {
         addRow: function() {
             this.rows.push(
                 {
-                    'max': '',
+                    'max': '5',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',
@@ -424,6 +443,11 @@ export default {
         readDetail(item) {
             this.changeId(item.id_transaksi);
             this.dialogDetail = true
+
+            this.detail.dibuat = item.created_at
+            this.detail.dibuatoleh = item.created_by
+            this.detail.diubah = item.updated_at
+            this.detail.diubaholeh = item.updated_by
         },
         showDiskon(id){
             this.dialog=true;
@@ -495,7 +519,8 @@ export default {
                 }
                 this.user.append('id_produk[]', this.rows[i].id_produk);
                 this.user.append('jumlah[]', this.rows[i].jumlah);
-                this.user.append('subtotal[]', this.rows[i].subtotal);   
+                this.user.append('subtotal[]', this.rows[i].subtotal); 
+                this.user.append('updated_by', this.getUsername());    
             }
 
             var uri = this.$apiUrl + '/detail-transaksi-produk/' + this.editDetil.id_transaksi;
@@ -622,6 +647,8 @@ export default {
         },
         resetForm() {
             this.changeId('-')
+            this.checkedLog = false,
+            this.dialogDetail = false,
             this.formDetail= {
                 customer: '',
                 id_hewan: '',
@@ -633,7 +660,7 @@ export default {
             this.rows.length = 0
             this.rows= [
                 {
-                    'max': '',
+                    'max': '5',
                     'id_transaksi': '',
                     'id_hewan': '',
                     'id_produk': '',

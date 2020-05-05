@@ -96,7 +96,7 @@
                                         <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
                                         <ul># <strong>Dibuat oleh : </strong>{{ this.detail.dibuatoleh }}</ul>
                                         <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah?this.detail.diubah:'-' }}</ul>
-                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh }}</ul>
+                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh?this.detail.diubaholeh:'-' }}</ul>
                                     </ul>
                                 </tbody>
                             </v-container>

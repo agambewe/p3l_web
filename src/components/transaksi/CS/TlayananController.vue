@@ -108,11 +108,23 @@
                                     <ul>
                                         <Detail></Detail>
                                     </ul>
+                                    <ul>
+                                        <label><strong>Lihat log? </strong></label>
+                                        <input type="checkbox" id="checkbox" v-model="checkedLog">
+                                    </ul>
+                                    <ul v-if="!checkedLog">
+                                    </ul>
+                                    <ul v-else>
+                                        <ul># <strong>Dibuat pada : </strong>{{ this.detail.dibuat }}</ul>
+                                        <ul># <strong>Dibuat oleh : </strong>{{ this.detail.dibuatoleh }}</ul>
+                                        <ul># <strong>Diubah pada : </strong>{{ this.detail.diubah?this.detail.diubah:'-' }}</ul>
+                                        <ul># <strong>Diubah oleh : </strong>{{ this.detail.diubaholeh?this.detail.diubaholeh:'-' }}</ul>
+                                    </ul>
                                 </tbody>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn class="text-md-right" color="blue accent-2" text @click="dialogDetail = false">Tutup</v-btn>
+                            <v-btn class="text-md-right" color="blue accent-2" text @click="clear">Tutup</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -220,6 +232,7 @@ export default {
             dialog: false,
             dialogDetail: false,
             checked: false,
+            checkedLog: false,
             typeInput: 'Tambah',
             keyword: '',
             headers: [{
@@ -250,6 +263,12 @@ export default {
                     'subtotal': ''
                 }
             ],
+            detail: {
+                    diubah: '',
+                    diubaholeh: '',
+                    dibuat: '',
+                    dibuatoleh: '',
+                },
             formDetail: {
                 customer: '',
                 id_hewan: '',
@@ -374,6 +393,11 @@ export default {
         readDetail(item) {
             this.changeId(item.id_transaksi);
             this.dialogDetail = true
+            
+            this.detail.dibuat = item.created_at
+            this.detail.dibuatoleh = item.created_by
+            this.detail.diubah = item.updated_at
+            this.detail.diubaholeh = item.updated_by
         },
         createData() {
             this.user.append('cs', this.getUsername());
@@ -469,6 +493,7 @@ export default {
                 }
                 this.user.append('id_layanan[]', this.rows[i].id_layanan);
                 this.user.append('subtotal[]', this.rows[i].subtotal);   
+                this.user.append('updated_by', this.getUsername());  
             }
 
             var uri = this.$apiUrl + '/detail-transaksi-layanan/' + this.editDetil.id_transaksi;
@@ -596,6 +621,8 @@ export default {
         resetForm() {
             this.changeId('-')
             this.checked = false,
+            this.checkedLog = false,
+            this.dialogDetail = false,
             this.formDetail= {
                 customer: null,
                 id_hewan: null,
