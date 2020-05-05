@@ -14,7 +14,7 @@
                                 <v-row>
                                     <v-col cols="12" sm="12" md="12">
                                         <ValidationProvider v-slot="{ errors }" name="Diskon" :rules="`required|min_value_diskon:0|max_value_diskon:${form.max_diskon}`">
-                                            <v-text-field v-model="form.diskon" type="number" :hint="form.max_diskon+' maximal'" label="Diskon" :error-messages="errors"></v-text-field>
+                                            <v-text-field v-model="form.diskon" type="number" label="Diskon" :error-messages="errors"></v-text-field>
                                         </ValidationProvider>
                                     </v-col>
                                 </v-row>
@@ -252,7 +252,7 @@ import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
     })
     extend('max_value_diskon', {
         ...max_value,
-        message: '{_field_} tidak boleh melebih subtotal.',
+        message: '{_field_} tidak boleh melebih total harga.',
     })
     extend('max_value', {
         ...max_value,
@@ -466,6 +466,7 @@ export default {
                     var det = response.data
                     if(!!det[0].hewan){
                         this.dialog=true;
+                        this.form.max_diskon = item.total_harga;
                     }else{
                         this.user.append('kasir', this.getUsername());
 
