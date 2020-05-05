@@ -260,7 +260,7 @@ export default {
                     value: 'id_transaksi'
                 },
                 {
-                    text: 'Status Bayar',
+                    text: '',
                     value: 'status_bayar'
                 },
             ],
