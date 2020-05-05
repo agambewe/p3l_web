@@ -13,8 +13,8 @@
                             <ValidationObserver ref="observer" v-slot="{ }">
                                 <v-row>
                                     <v-col cols="12" sm="12" md="12">
-                                        <ValidationProvider v-slot="{ errors }" name="Diskon" rules="required|min_value_diskon:0">
-                                            <v-text-field v-model="form.diskon" type="number" label="Diskon" :error-messages="errors"></v-text-field>
+                                        <ValidationProvider v-slot="{ errors }" name="Diskon" :rules="`required|min_value_diskon:0|max_value_diskon:${form.max_diskon}`">
+                                            <v-text-field v-model="form.diskon" type="number" :hint="form.max_diskon+' maximal'" label="Diskon" :error-messages="errors"></v-text-field>
                                         </ValidationProvider>
                                     </v-col>
                                 </v-row>
@@ -250,6 +250,10 @@ import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
         ...min_value,
         message: '{_field_} tidak boleh minus.',
     })
+    extend('max_value_diskon', {
+        ...max_value,
+        message: '{_field_} tidak boleh melebih subtotal.',
+    })
     extend('max_value', {
         ...max_value,
         message: '{_field_} produk melebihi stok.',
@@ -299,6 +303,7 @@ export default {
             produk: [],
             rows: [
                 {
+                    'max_diskon': '10000',
                     'max': '5',
                     'id_transaksi': '',
                     'id_hewan': '',
@@ -331,6 +336,7 @@ export default {
             form: {
                     id: '',
                     diskon: '',
+                    max_diskon: ''
                 },
             errors: '',
             user: new FormData,
@@ -673,7 +679,8 @@ export default {
             this.produk = []
             this.form= {
                 id: '',
-                diskon: ''
+                diskon: '',
+                max_diskon:''
             }
             this.initData();
 
