@@ -3,6 +3,9 @@
     <v-container grid-list-md mb-0>
         <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Transaksi Produk</h1>
         <v-layout row wrap style="margin:10px">
+            <v-flex xs12>
+                <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
+            </v-flex>
             <v-dialog v-model="dialog" persistent max-width="300px">
                 <v-card>
                     <v-card-title>

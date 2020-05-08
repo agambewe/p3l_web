@@ -3,6 +3,9 @@
     <v-container grid-list-md mb-0>
         <h1 class="text-md-center" style="font-family: 'Share Tech Mono';text-shadow: -2px 4px 4px silver">Transaksi Layanan</h1>
         <v-layout row wrap style="margin:10px">
+            <v-flex xs12>
+                <v-text-field v-model="keyword" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
+            </v-flex>
             <v-dialog v-model="dialog" persistent max-width="300px">
                 <v-card>
                     <v-card-title>
@@ -23,8 +26,25 @@
                     </v-card-text>
                     <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue accent-2" text @click="close">Batal</v-btn>
+                            <v-btn color="blue accent-2" text @click="close">Tutup</v-btn>
                             <v-btn v-if="typeInput=='Masukkan'" color="green lighten-1" text @click="updateData()">Simpan</v-btn>
+                        </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialogNota" max-width="1000px">
+                <v-card>
+                    <!-- <v-card-title>
+                        <span class="headline text-md-center">{{ formTitle }} diskon</span>
+                    </v-card-title> -->
+                    <v-card-text>
+                        <v-container>
+                            <Pdf :src="urlNota"></Pdf>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue accent-2" text @click="dialogNota = false">Tutup</v-btn>
+                            <v-btn color="green lighten-1" text @click="showNota('download')">Download</v-btn>
                         </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -151,7 +171,10 @@
                                 <v-btn icon color="amber accent-3" @click="readDetail(item)">
                                     <v-icon>mdi-arrow-down</v-icon>
                                 </v-btn>
-                                <v-btn v-if="item.status_bayar==0" icon color="amber accent-3" @click="editHandler(item)">
+                                <v-btn v-if="item.status_bayar==1" icon color="amber darken-3" @click="showNota(item.id_transaksi)">
+                                    <v-icon>mdi-receipt</v-icon>
+                                </v-btn>
+                                <v-btn v-if="item.status_bayar==0" icon color="amber accent-4" @click="editHandler(item)">
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
                                 <v-btn v-if="item.status_bayar==0" icon color="red darken-4" @click="deleteData(item.id)">
@@ -228,6 +251,7 @@ tbody tr:nth-of-type(odd) {
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import Pdf from 'vue-pdf'
 import Detail from "./DlayananController";
 import { required, min_value, min } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
@@ -244,6 +268,7 @@ import { required, min_value, min } from 'vee-validate/dist/rules'
 
 export default {
     components: {
+        Pdf,
         Detail,
         ValidationProvider,
         ValidationObserver,
@@ -254,6 +279,7 @@ export default {
             dialog: false,
             dialogEdit: false,
             dialogDetail: false,
+            dialogNota: false,
             checked: false,
             checkedLog: false,
             typeInput: 'Masukkan',
@@ -316,6 +342,7 @@ export default {
                     id: '',
                     diskon: '',
                 },
+            urlNota: '',
             errors: '',
             user: new FormData,
         }
@@ -429,6 +456,15 @@ export default {
             this.detail.dibuatoleh = item.created_by
             this.detail.diubah = item.updated_at
             this.detail.diubaholeh = item.updated_by
+        },
+        showNota(id){
+            if(id=='download'){
+                window.open(this.$apiUrl + '/nota/layanan/download/'+this.editDetil.id_transaksi, "_blank");
+            }else{
+                this.editDetil.id_transaksi = id
+                this.urlNota = this.$apiUrl + '/nota/layanan/lihat/'+id
+            }
+            this.dialogNota = true;
         },
         showDiskon(id){
             this.dialog=true;
