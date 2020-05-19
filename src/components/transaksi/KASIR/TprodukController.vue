@@ -361,6 +361,7 @@ export default {
                     diskon: '',
                     max_diskon: ''
                 },
+            urlNota: '',
             errors: '',
             user: new FormData,
         }

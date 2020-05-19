@@ -104,6 +104,20 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <v-dialog v-model="dialogNota" max-width="1000px">
+                    <v-card>
+                        <v-card-text>
+                            <v-container>
+                                <Pdf :src="urlNota"></Pdf>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue accent-2" text @click="dialogNota = false">Tutup</v-btn>
+                                <v-btn color="green lighten-1" text @click="showNota('download')">Download</v-btn>
+                            </v-card-actions>
+                    </v-card>
+                </v-dialog>
         </v-layout>
         <v-data-table :headers="headers" :items-per-page="5" :items="restock" :sort-by="'status_order'" :sort-desc="false" :search="keyword" :loading="load" no-data-text="Data kosong" light>
             <template v-slot:body="{ items }">
@@ -113,6 +127,9 @@
                             <div class="flex">
                                 <v-btn icon color="amber accent-3" @click="readDetail(item)">
                                     <v-icon>mdi-arrow-down</v-icon>
+                                </v-btn>
+                                <v-btn v-if="item.status_order==1" icon color="amber darken-3" @click="showNota(item.id_po)">
+                                    <v-icon>mdi-receipt</v-icon>
                                 </v-btn>
                                 <v-btn v-if="item.status_order==0" icon color="amber accent-3" @click="editHandler(item)">
                                     <v-icon>mdi-pencil</v-icon>
@@ -198,6 +215,7 @@ tbody tr:nth-of-type(odd) {
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import Pdf from 'vue-pdf'
 import Detail from "./detailController";
 import { required, min_value } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
@@ -214,6 +232,7 @@ import { required, min_value } from 'vee-validate/dist/rules'
 
 export default {
     components: {
+        Pdf,
         Detail,
         ValidationProvider,
         ValidationObserver,
@@ -223,6 +242,7 @@ export default {
             load: false,
             dialog: false,
             dialogDetail: false,
+            dialogNota: false,
             typeInput: 'Tambah',
             keyword: '',
             headers: [{
@@ -278,6 +298,7 @@ export default {
                     'jumlah': ''
                 }],
             },
+            urlNota: '',
             errors: '',
             user: new FormData,
         }
@@ -366,6 +387,15 @@ export default {
         readDetail(item) {
             this.changeId(item.id_po);
             this.dialogDetail = true
+        },
+        showNota(id){
+            if(id=='download'){
+                window.open(this.$apiUrl + '/nota/pengadaan/download/'+this.editDetil.id_po, "_blank");
+            }else{
+                this.editDetil.id_po = id
+                this.urlNota = this.$apiUrl + '/nota/pengadaan/lihat/'+id
+            }
+            this.dialogNota = true;
         },
         createData() {
             this.user.append('id_supplier', this.formDetail.supplier);
