@@ -31,6 +31,20 @@
                         </v-card-actions>
                 </v-card>
             </v-dialog>
+            <v-dialog v-model="dialogNota" max-width="1000px">
+                <v-card>
+                    <v-card-text>
+                        <v-container>
+                            <Pdf :src="urlNota"></Pdf>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue accent-2" text @click="dialogNota = false">Tutup</v-btn>
+                            <v-btn color="green lighten-1" text @click="showNota('download')">Download</v-btn>
+                        </v-card-actions>
+                </v-card>
+            </v-dialog>
             <v-dialog v-model="dialogEdit" persistent max-width="1000px">
                 <v-card>
                     <v-card-title>
@@ -159,6 +173,9 @@
                                 <v-btn icon color="amber accent-3" @click="readDetail(item)">
                                     <v-icon>mdi-arrow-down</v-icon>
                                 </v-btn>
+                                <v-btn v-if="item.status_bayar==1" icon color="amber darken-3" @click="showNota(item.id_transaksi)">
+                                    <v-icon>mdi-receipt</v-icon>
+                                </v-btn>
                                 <v-btn v-if="item.status_bayar==0" icon color="amber accent-3" @click="editHandler(item)">
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
@@ -236,6 +253,7 @@ tbody tr:nth-of-type(odd) {
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import Pdf from 'vue-pdf'
 import Detail from "./DprodukController";
 import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
@@ -264,6 +282,7 @@ import { required, min_value, min, max_value } from 'vee-validate/dist/rules'
 
 export default {
     components: {
+        Pdf,
         Detail,
         ValidationProvider,
         ValidationObserver,
@@ -274,6 +293,7 @@ export default {
             dialog: false,
             dialogEdit: false,
             dialogDetail: false,
+            dialogNota: false,
             checked: false,
             checkedLog: false,
             typeInput: 'Masukkan',
@@ -457,6 +477,15 @@ export default {
             this.detail.dibuatoleh = item.created_by
             this.detail.diubah = item.updated_at
             this.detail.diubaholeh = item.updated_by
+        },
+        showNota(id){
+            if(id=='download'){
+                window.open(this.$apiUrl + '/nota/produk/download/'+this.editDetil.id_transaksi, "_blank");
+            }else{
+                this.editDetil.id_transaksi = id
+                this.urlNota = this.$apiUrl + '/nota/produk/lihat/'+id
+            }
+            this.dialogNota = true;
         },
         showDiskon(id){
             this.dialog=true;
