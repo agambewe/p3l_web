@@ -67,6 +67,10 @@ export default {
                 title: 'Laporan',
                 icon: 'mdi-file-document',
                 items: [
+                    {
+                        title: 'Laporan Pengadaan',
+                        path: '/laporan-pengadaan',
+                    },
                 ],
             },
         ],

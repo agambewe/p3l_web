@@ -4,7 +4,10 @@ const SideLayout = () => import(/* webpackChunkName: "dashboard" */ '../componen
 const loginLayout = () => import(/* webpackChunkName: "dashboard" */ '../components/login.vue') 
 function loadView(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/dataMaster/${view}.vue`) 
-} 
+}
+function loadViewlaporan(view) {
+    return () => import(/* webpackChunkName: "view-[request]" */ `../components/laporan/${view}.vue`) 
+}
 function loadSampah(view) {
     return () => import(/* webpackChunkName: "view-[request]" */ `../components/keranjangSampah/${view}.vue`) 
 }
@@ -54,6 +57,9 @@ const routes = [
             { name: 'UkuranHewanController', path: '/ukuran-hewan', component: loadView('ukuranHewanController') },
             { name: 'JenisHewanController', path: '/jenis-hewan', component: loadView('jenisHewanController') },
 
+            //Laporan
+            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan', component: loadViewlaporan('laporanPengadaanController') },
+            
             //Pengadaan
             { name: 'SupplierController', path: '/supplier', component: loadRest('supplierController') },
             { name: 'PengadaanController', path: '/pengadaan', component: loadRest('pengadaanController') },
