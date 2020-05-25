@@ -58,7 +58,11 @@ const routes = [
             { name: 'JenisHewanController', path: '/jenis-hewan', component: loadView('jenisHewanController') },
 
             //Laporan
-            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan', component: loadViewlaporan('laporanPengadaanController') },
+            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan-tahunan', component: loadViewlaporan('laporanPengadaanTahunanController') },
+            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan-bulanan', component: loadViewlaporan('laporanPengadaanBulananController') },
+            { name: 'LaporanProdukController', path: '/laporan-produk', component: loadViewlaporan('laporanProdukController') },
+            { name: 'LaporanLayananController', path: '/laporan-layanan', component: loadViewlaporan('laporanLayananController') },
+            { name: 'LaporanPendapatanController', path: '/laporan-pendapatan', component: loadViewlaporan('laporanPendapatanController') },
             
             //Pengadaan
             { name: 'SupplierController', path: '/supplier', component: loadRest('supplierController') },

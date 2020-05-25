@@ -68,8 +68,20 @@ export default {
                 icon: 'mdi-file-document',
                 items: [
                     {
-                        title: 'Laporan Pengadaan',
-                        path: '/laporan-pengadaan',
+                        title: 'Pengadaan',
+                        path: '/laporan-pengadaan-tahunan',
+                    },
+                    {
+                        title: 'Produk',
+                        path: '/laporan-produk',
+                    },
+                    {
+                        title: 'Layanan',
+                        path: '/laporan-layanan',
+                    },
+                    {
+                        title: 'Pendapatan',
+                        path: '/laporan-pendapatan',
                     },
                 ],
             },
