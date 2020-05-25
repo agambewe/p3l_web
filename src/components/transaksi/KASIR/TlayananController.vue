@@ -38,13 +38,14 @@
                     </v-card-title> -->
                     <v-card-text>
                         <v-container>
-                            <Pdf :src="urlNota"></Pdf>
+                            <Pdf :src="urlNota" ref="printPdf"></Pdf>
                         </v-container>
                     </v-card-text>
                     <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="blue accent-2" text @click="dialogNota = false">Tutup</v-btn>
                             <v-btn color="green lighten-1" text @click="showNota('download')">Download</v-btn>
+                            <v-btn color="orange lighten-1" text @click="printNota()">Print</v-btn>
                         </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -465,6 +466,9 @@ export default {
                 this.urlNota = this.$apiUrl + '/nota/layanan/lihat/'+id
             }
             this.dialogNota = true;
+        },
+        printNota(){
+            this.$refs.printPdf.print()
         },
         showDiskon(id){
             this.dialog=true;

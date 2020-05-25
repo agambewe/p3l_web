@@ -108,13 +108,14 @@
                     <v-card>
                         <v-card-text>
                             <v-container>
-                                <Pdf :src="urlNota"></Pdf>
+                                <Pdf :src="urlNota" ref="printPdf"></Pdf>
                             </v-container>
                         </v-card-text>
                         <v-card-actions>
                                 <v-spacer></v-spacer>
                                 <v-btn color="blue accent-2" text @click="dialogNota = false">Tutup</v-btn>
                                 <v-btn color="green lighten-1" text @click="showNota('download')">Download</v-btn>
+                                <v-btn color="orange lighten-1" text @click="printNota()">Print</v-btn>
                             </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -216,9 +217,10 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import Pdf from 'vue-pdf'
+import printJS from 'print-js'
 import Detail from "./detailController";
 import { required, min_value } from 'vee-validate/dist/rules'
-    import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
     setInteractionMode('eager')
 
     extend('required', {
@@ -299,6 +301,7 @@ export default {
                 }],
             },
             urlNota: '',
+            urlPdf: '',
             errors: '',
             user: new FormData,
         }
@@ -394,8 +397,18 @@ export default {
             }else{
                 this.editDetil.id_po = id
                 this.urlNota = this.$apiUrl + '/nota/pengadaan/lihat/'+id
+                this.urlPdf = this.$apiUrl + '/../pdf/NOTA-'+id+'.pdf'
             }
             this.dialogNota = true;
+        },
+        printNota(){
+            this.$refs.printPdf.print()
+            // printJS({
+            //     printable: 'https://printjs.crabbly.com/docs/printjs.pdf',
+            //     type: 'pdf',
+            //     showModal: true,
+            //     modalMessage: 'Retrieving document from external server...'
+            // })
         },
         createData() {
             this.user.append('id_supplier', this.formDetail.supplier);
