@@ -10,13 +10,14 @@
             <v-card>
                 <v-card-text>
                     <v-container>
-                        <Pdf :src="urlLaporan"></Pdf>
+                        <Pdf :src="urlLaporan" ref="printPdf"></Pdf>
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue accent-2" text @click="dialogLaporan = false">Tutup</v-btn>
                     <v-btn color="green lighten-1" text @click="showLaporan('download')">Download</v-btn>
+                    <v-btn color="orange lighten-1" text @click="printNota()">Print</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -46,7 +47,7 @@
         <v-btn
         color="blue accent-2" text
         @click="showLaporan(form.tahun,form.bulan)"
-        > Tampil Laporan Tahunan </v-btn>
+        > Tampil Laporan Bulanan </v-btn>
         </v-layout>
     </v-container>
 </v-container>
@@ -98,6 +99,7 @@ tbody tr:nth-of-type(odd) {
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Pdf from 'vue-pdf'
+import printJS from 'print-js'
 import { required, min_value } from 'vee-validate/dist/rules'
     import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
     setInteractionMode('eager')
@@ -115,7 +117,7 @@ export default {
     },
     data() {
         return {
-            pilihantahun:["2008","2014","2019"],
+            pilihantahun:["2008","2014","2019","2020"],
             pilihanbulan:["01","02","03","04","05","06","07","08","09","10","11","12"],
             dialogLaporan: false,
             form: {
@@ -138,15 +140,17 @@ export default {
     methods: {
         showLaporan(tahun,bulan){
             if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetakBulanan_pdf/'+this.form.tahun+'/'+this.form.bulan, "_blank");
+                window.open(this.$apiUrl + '/laporan/pendapatan-bulan/download/'+this.form.tahun+'/'+this.form.bulan, "_blank");
             }else{
                 this.form.tahun = tahun
                 this.form.bulan = bulan
-                this.urlLaporan = this.$apiUrl + '/laporan/pengadaan/tampilBulanan_pdf/'+tahun+'/'+bulan
+                this.urlLaporan = this.$apiUrl + '/laporan/pendapatan-bulan/'+tahun+'/'+bulan
             }
             this.dialogLaporan = true;
         },
-        
+        printNota(){
+            this.$refs.printPdf.print()
+        },
         close() {
             this.dialog = false
             this.typeInput = 'Tambah';
