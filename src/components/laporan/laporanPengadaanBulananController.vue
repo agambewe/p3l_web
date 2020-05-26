@@ -2,7 +2,7 @@
 <v-container dark>
     <v-container grid-list-md mb-0>
         <center>
-            <img src="../assets/kopsurat.png" id='kopsurat' > 
+            <img src= "../../assets/kopsurat.png" id='kopsurat' >
             <h1>Laporan Pengadaan Produk Bulanan</h1>
         </center>
         <v-layout row wrap style="margin:10px">
