@@ -73,15 +73,15 @@ export default {
                     },
                     {
                         title: 'Produk',
-                        path: '/laporan-produk',
+                        path: '/laporan-produk-terlaris',
                     },
                     {
                         title: 'Layanan',
-                        path: '/laporan-layanan',
+                        path: '/laporan-layanan-terlaris',
                     },
                     {
                         title: 'Pendapatan',
-                        path: '/laporan-pendapatan',
+                        path: '/laporan-pendapatan-tahunan',
                     },
                 ],
             },
