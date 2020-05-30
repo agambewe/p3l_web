@@ -71,11 +71,12 @@ const routes = [
             { name: 'JenisHewanController', path: '/jenis-hewan', component: loadView('jenisHewanController') },
 
             //Laporan
-            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan-tahunan', component: loadViewlaporan('laporanPengadaanTahunanController') },
-            { name: 'LaporanPengadaanController', path: '/laporan-pengadaan-bulanan', component: loadViewlaporan('laporanPengadaanBulananController') },
-            { name: 'LaporanProdukController', path: '/laporan-produk', component: loadViewlaporan('laporanProdukController') },
-            { name: 'LaporanLayananController', path: '/laporan-layanan', component: loadViewlaporan('laporanLayananController') },
-            { name: 'LaporanPendapatanController', path: '/laporan-pendapatan', component: loadViewlaporan('laporanPendapatanController') },
+            { name: 'LaporanController', path: '/laporan-pengadaan-tahunan', component: loadViewlaporan('laporanPengadaanTahunanController') },
+            { name: 'LaporanController', path: '/laporan-pengadaan-bulanan', component: loadViewlaporan('laporanPengadaanBulananController') },
+            { name: 'LaporanController', path: '/laporan-produk-terlaris', component: loadViewlaporan('laporanProdukTerlarisController') },
+            { name: 'LaporanController', path: '/laporan-layanan-terlaris', component: loadViewlaporan('laporanLayananTerlarisController') },
+            { name: 'LaporanController', path: '/laporan-pendapatan-tahunan', component: loadViewlaporan('laporanPendapatanTahunanController') },
+            { name: 'LaporanController', path: '/laporan-pendapatan-bulanan', component: loadViewlaporan('laporanPendapatanBulananController') },
             
             //Pengadaan
             { name: 'SupplierController', path: '/supplier', component: loadRest('supplierController') },

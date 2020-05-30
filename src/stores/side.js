@@ -69,19 +69,28 @@ export default {
                 items: [
                     {
                         title: 'Pengadaan',
-                        path: '/laporan-pengadaan-tahunan',
+                        items:[
+                            {
+                                title: 'Pengadaan Tahunan',
+                                path: '/laporan-pengadaan-tahunan',
+                            },
+                            {
+                                title: 'Pengadaan Bulanan',
+                                path: '/laporan-pengadaan-bulanan',
+                            },
+                        ],
                     },
                     {
                         title: 'Produk',
-                        path: '/laporan-produk',
+                        path: '/laporan-produk-terlaris',
                     },
                     {
                         title: 'Layanan',
-                        path: '/laporan-layanan',
+                        path: '/laporan-layanan-terlaris',
                     },
                     {
                         title: 'Pendapatan',
-                        path: '/laporan-pendapatan',
+                        path: '/laporan-pendapatan-tahunan',
                     },
                 ],
             },

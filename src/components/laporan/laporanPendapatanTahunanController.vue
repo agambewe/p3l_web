@@ -3,7 +3,7 @@
     <v-container grid-list-md mb-0>
         <center>
             <img src= "../../assets/kopsurat.png" id='kopsurat' >
-            <h1>Laporan Pengadaan Produk Tahunan</h1>
+            <h1>Laporan Pendapatan Tahunan</h1>
         </center>
         <v-layout row wrap style="margin:10px">
         <v-dialog v-model="dialogLaporan" max-width="1000px">
@@ -129,10 +129,10 @@ export default {
     methods: {
         showLaporan(tahun){
             if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetak_pdf/'+this.form.tahun, "_blank");
+                window.open(this.$apiUrl + '/laporan/pendapatan-tahun/download/'+this.form.tahun, "_blank");
             }else{
                 this.form.tahun = tahun
-                this.urlLaporan = this.$apiUrl + '/laporan/pengadaan/tampil_pdf/'+tahun
+                this.urlLaporan = this.$apiUrl + '/laporan/pendapatan-tahun/'+tahun
             }
             this.dialogLaporan = true;
         },
