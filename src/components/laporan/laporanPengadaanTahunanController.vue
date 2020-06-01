@@ -3,7 +3,7 @@
     <v-container grid-list-md mb-0>
         <center>
             <img src= "../../assets/kopsurat.png" id='kopsurat' >
-            <h1>Laporan Pengadaan Produk Tahunan</h1>
+            <h1>Laporan Pengadaan Produk</h1>
         </center>
         <v-layout row wrap style="margin:10px">
         <v-dialog v-model="dialogLaporan" max-width="1000px">
