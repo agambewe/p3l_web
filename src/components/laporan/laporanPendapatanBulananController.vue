@@ -26,12 +26,8 @@
             <v-flex xs6>
                 <v-col cols="5">
                     <h4 class="text-md-left">Pilih tahun</h4> 
-                        <v-select
-                        :items="pilihantahun"
-                        v-model="form.tahun"
-                        >
-                    </v-select>  
-                </v-col>
+                        <v-text-field type="number" v-model="form.tahun" required></v-text-field>  
+                </v-col> 
                 <v-col cols="3">
                     <h4 class="text-md-left">Pilih Bulan</h4> 
                         <v-select
@@ -117,7 +113,6 @@ export default {
     },
     data() {
         return {
-            pilihantahun:["2008","2014","2019","2020"],
             pilihanbulan:["01","02","03","04","05","06","07","08","09","10","11","12"],
             dialogLaporan: false,
             form: {

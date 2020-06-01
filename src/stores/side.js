@@ -69,16 +69,7 @@ export default {
                 items: [
                     {
                         title: 'Pengadaan',
-                        items:[
-                            {
-                                title: 'Pengadaan Tahunan',
-                                path: '/laporan-pengadaan-tahunan',
-                            },
-                            {
-                                title: 'Pengadaan Bulanan',
-                                path: '/laporan-pengadaan-bulanan',
-                            },
-                        ],
+                        path: '/laporan-pengadaan-tahunan',
                     },
                     {
                         title: 'Produk',
