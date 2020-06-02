@@ -3,10 +3,10 @@
     <v-container grid-list-md mb-0>
         <center>
             <img src= "../../assets/kopsurat.png" id='kopsurat' >
-            <h1>Laporan Pengadaan Produk</h1>
+            <h1>Laporan Layanan Terlaris</h1>
         </center>
         <v-layout row wrap style="margin:10px">
-        <v-dialog v-model="dialogLaporan" max-width="1000px">
+        <v-dialog v-model="dialogLaporan" max-width="1200px">
             <v-card>
                 <v-card-text>
                     <v-container>
@@ -21,35 +21,12 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogLaporanBulanan" max-width="1000px">
-            <v-card>
-                <v-card-text>
-                    <v-container>
-                        <Pdf :src="urlLaporanBulanan" ref="printPdf"></Pdf>
-                    </v-container>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue accent-2" text @click="dialogLaporanBulanan = false">Tutup</v-btn>
-                    <v-btn color="green lighten-1" text @click="showLaporanBulanan('download')">Download</v-btn>
-                    <v-btn color="orange lighten-1" text @click="printNota()">Print</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
         </v-layout>
         <v-layout row wrap style="margin:10px">
             <v-flex xs6>
                 <v-col cols="5">
                     <h4 class="text-md-left">Pilih tahun</h4> 
                         <v-text-field type="number" v-model="form.tahun" required></v-text-field>  
-                </v-col> 
-                 <v-col cols="3">
-                    <h4 class="text-md-left">Pilih Bulan</h4> 
-                        <v-select
-                        :items="pilihanbulan"
-                        v-model="form.bulan"
-                        >
-                    </v-select>  
                 </v-col> 
             </v-flex>
         </v-layout>
@@ -58,11 +35,7 @@
         <v-btn
         color="blue accent-2" text
         @click="showLaporan(form.tahun)"
-        > Tampil Laporan Tahunan </v-btn>
-        <v-btn
-        color="blue accent-2" text
-        @click="showLaporanBulanan(form.tahun,form.bulan)"
-        > Tampil Laporan Bulanan </v-btn>
+        > Tampil Laporan Layanan Terlaris </v-btn>
         </v-layout>
     </v-container>
 </v-container>
@@ -132,16 +105,12 @@ export default {
     },
     data() {
         return {
-            pilihanbulan:["01","02","03","04","05","06","07","08","09","10","11","12"],
-            dialogLaporanBulanan: false,
             dialogLaporan: false,
             form: {
                 tahun : '',
                 bulan : '',
             },
             tahun : '',
-            bulan : '',
-            urlLaporanBulanan : '',
             urlLaporan : '',
             errors: '',
             user: new FormData,
@@ -150,28 +119,17 @@ export default {
     validations: {
         form: {
             tahun: { required },
-            bulan: { required },
         },
     },
     methods: {
         showLaporan(tahun){
             if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetak_pdf/'+this.form.tahun, "_blank");
+                window.open(this.$apiUrl + '/laporan/layanan-terlaris/download/'+this.form.tahun, "_blank");
             }else{
                 this.form.tahun = tahun
-                this.urlLaporan = this.$apiUrl + '/laporan/pengadaan/tampil_pdf/'+tahun
+                this.urlLaporan = this.$apiUrl + '/laporan/layanan-terlaris/'+tahun
             }
             this.dialogLaporan = true;
-        },
-        showLaporanBulanan(tahun,bulan){
-            if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetakBulanan_pdf/'+this.form.tahun+'/'+this.form.bulan, "_blank");
-            }else{
-                this.form.tahun = tahun
-                this.form.bulan = bulan
-                this.urlLaporanBulanan = this.$apiUrl + '/laporan/pengadaan/tampilBulanan_pdf/'+tahun+'/'+bulan
-            }
-            this.dialogLaporanBulanan = true;
         },
         printNota(){
             this.$refs.printPdf.print()

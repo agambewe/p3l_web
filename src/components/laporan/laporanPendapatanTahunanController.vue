@@ -3,7 +3,7 @@
     <v-container grid-list-md mb-0>
         <center>
             <img src= "../../assets/kopsurat.png" id='kopsurat' >
-            <h1>Laporan Pengadaan Produk</h1>
+            <h1>Laporan Pendapatan</h1>
         </center>
         <v-layout row wrap style="margin:10px">
         <v-dialog v-model="dialogLaporan" max-width="1000px">
@@ -43,7 +43,7 @@
                     <h4 class="text-md-left">Pilih tahun</h4> 
                         <v-text-field type="number" v-model="form.tahun" required></v-text-field>  
                 </v-col> 
-                 <v-col cols="3">
+                <v-col cols="3">
                     <h4 class="text-md-left">Pilih Bulan</h4> 
                         <v-select
                         :items="pilihanbulan"
@@ -132,7 +132,7 @@ export default {
     },
     data() {
         return {
-            pilihanbulan:["01","02","03","04","05","06","07","08","09","10","11","12"],
+            pilihanbulan:[" ","01","02","03","04","05","06","07","08","09","10","11","12"],
             dialogLaporanBulanan: false,
             dialogLaporan: false,
             form: {
@@ -156,20 +156,20 @@ export default {
     methods: {
         showLaporan(tahun){
             if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetak_pdf/'+this.form.tahun, "_blank");
+                window.open(this.$apiUrl + '/laporan/pendapatan-tahun/download/'+this.form.tahun, "_blank");
             }else{
                 this.form.tahun = tahun
-                this.urlLaporan = this.$apiUrl + '/laporan/pengadaan/tampil_pdf/'+tahun
+                this.urlLaporan = this.$apiUrl + '/laporan/pendapatan-tahun/'+tahun
             }
             this.dialogLaporan = true;
         },
         showLaporanBulanan(tahun,bulan){
             if(tahun=='download'){
-                window.open(this.$apiUrl + '/laporan/pengadaan/cetakBulanan_pdf/'+this.form.tahun+'/'+this.form.bulan, "_blank");
+                window.open(this.$apiUrl + '/laporan/pendapatan-bulan/download/'+this.form.tahun+'/'+this.form.bulan, "_blank");
             }else{
                 this.form.tahun = tahun
                 this.form.bulan = bulan
-                this.urlLaporanBulanan = this.$apiUrl + '/laporan/pengadaan/tampilBulanan_pdf/'+tahun+'/'+bulan
+                this.urlLaporanBulanan = this.$apiUrl + '/laporan/pendapatan-bulan/'+tahun+'/'+bulan
             }
             this.dialogLaporanBulanan = true;
         },
