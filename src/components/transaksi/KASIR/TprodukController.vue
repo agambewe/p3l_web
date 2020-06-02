@@ -379,6 +379,11 @@ export default {
         ...mapMutations({
             changeId: "transaksi/changeId",
         }),
+        cekNotif() {
+            var uri = this.$apiUrl + '/produk-notif/'
+            this.$http.get(uri).then(response => {
+            })
+        },
         addRow: function() {
             this.rows.push(
                 {
@@ -622,6 +627,7 @@ export default {
                         timer: 1500
                     })
                     this.load = false;
+                    this.cekNotif();
                     this.close();
                     this.readData(); //refresh data ini 
                     this.resetForm();

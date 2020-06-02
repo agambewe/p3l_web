@@ -75,6 +75,30 @@
             <v-toolbar-title style="font-family: 'Jolly Lodger';font-size: 45px;" > Kouvee Pet Shop </v-toolbar-title>
             <VSpacer /> 
             <v-toolbar-items>
+                    <!-- <v-menu
+                    v-slot:activator="{ on }"
+                    offset-y
+                    origin="center center"
+                    class="elelvation-1"
+                    :nudge-bottom="14"
+                    transition="scale-transition"
+                    >
+                    <v-btn icon v-on="on" 
+                    @click="notifFetch()">
+                        <v-badge color="red" overlap>
+                            <span slot="badge">{{unreadNotifications.length}}</span>
+                        <v-icon medium>mdi-bell-ring-outline</v-icon>
+                        </v-badge>
+                    </v-btn>
+
+                    <v-list>
+                        <v-list-tile :class="{'green': notification.read_at==null}" v-for="notification in allNotifications" :key="notification.id">
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{notification.data.createdUser.name}} has just registered on {{notification.created_at}}</v-list-tile-title>
+                        </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                    </v-menu> -->
                 <v-btn text router @click="dialog = true"><v-icon>mdi-face</v-icon></v-btn>
                 <v-btn text router @click="submitLogout()"><v-icon>mdi-power</v-icon></v-btn>
             </v-toolbar-items>
@@ -91,9 +115,12 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import firebase from 'firebase'
+import manifest from "../../public/manifest.json";
 export default { 
     data () { 
         return { 
+            manifest: manifest,
             dialog: false,
             drawer: true,
             expandOnHover: true,
@@ -102,22 +129,78 @@ export default {
             role: '',
             items: [],
             dataPegawai: [],
+            allNotifications: [],
+            unreadNotifications: [],
         } 
     }, 
+    created() {
+    },
     mounted () {
         this.setUsername();
         this.setRole();
         this.cekRole();
         this.readDataPegawai();
+        this.notifPermission();
+        this.notifFetch();
         // console.log(this.pegawai());
 
     },
     methods: {
-        readDataPegawai() {
-            var uri = this.$apiUrl + '/pegawai/user/' + this.username;
-            this.$http.get(uri).then(response => {
-                this.dataPegawai = response.data
-            })
+        notifFetch(){
+            // messaging.onMessage((payload) => {
+            //     console.log('Message received. ', payload);
+            // // ...
+            // });
+        },
+        notifPermission(){
+            if(this.role=== "OWNER"){
+                Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                    // TODO(developer): Retrieve an Instance ID token for use with FCM.
+                    // ...
+                    if(this.isTokenSentToServer()){
+                        console.log("Token already save on server");
+                    }else{
+                        this.getToken();
+                    }
+                } else {
+                    console.log('Unable to get permission to notify.');
+                }
+                });
+            }
+        },
+        setTokenSentToServer(sent) {
+	        localStorage.setItem('sentToServer', sent ? 1 : 0);
+        },
+        isTokenSentToServer() {
+            return localStorage.getItem('sentToServer') == 1;
+        },
+        getToken(){
+            const messaging = firebase.messaging();
+                    // console.log(messaging.getToken())
+            // Get Instance ID token. Initially this makes a network call, once retrieved
+            // subsequent calls to getToken will return from cache.
+            messaging.usePublicVapidKey("BJkk2-iNdhp-oABmlwo0C9i07hQVmS07_z78SzNYn29J5g1_00KljLAa6JTSX0eh-HL2JyWF4GeoNgn44gs52_A");
+            messaging.getToken().then((currentToken) => {
+                if (currentToken) {
+                    console.log(currentToken)
+                    this.setTokenSentToServer(true);
+                } else {
+                    console.log('No Instance ID token available. Request permission to generate one.');
+                    this.setTokenSentToServer(false);
+                }
+                }).catch((err) => {
+                    console.log('An error occurred while retrieving token. ', err);
+                    showToken('Error retrieving Instance ID token. ', err);
+                    setTokenSentToServer(false);
+                });
+            },
+            readDataPegawai() {
+                var uri = this.$apiUrl + '/pegawai/user/' + this.username;
+                this.$http.get(uri).then(response => {
+                    this.dataPegawai = response.data
+                })
         },
         setRole() {
             this.role = localStorage.getItem('role');

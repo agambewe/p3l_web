@@ -281,6 +281,11 @@ export default {
     },
     watch: {},
     methods: {
+        cekNotif() {
+            var uri = this.$apiUrl + '/produk-notif/'
+            this.$http.get(uri).then(response => {
+            })
+        },
         close() {
             this.dialog = false
             this.typeInput = 'Tambah';
@@ -392,6 +397,7 @@ export default {
                     timer: 1500
                 })
                 this.load = false;
+                this.cekNotif();
                 this.close();
                 this.readData(); //refresh data ini 
                 this.resetForm();

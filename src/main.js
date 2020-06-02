@@ -2,7 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import Axios from 'axios' 
 import store from './store';
-import router from './router' 
+import router from './router'
+import firebase from 'firebase'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import vuetify from './plugins/vuetify';
@@ -20,26 +21,25 @@ const options = {
   cancelButtonColor: '#FF5252',
 };
 
+var config = {
+  apiKey: "AIzaSyDjnVkuY6NdV5dIN7WLOdCNOhiein4jcHc",
+  authDomain: "fcm-p3l.firebaseapp.com",
+  databaseURL: "https://fcm-p3l.firebaseio.com",
+  projectId: "fcm-p3l",
+  storageBucket: "fcm-p3l.appspot.com",
+  messagingSenderId: "820865122912",
+  appId: "1:820865122912:web:0b19a5b3966c339e097905",
+  measurementId: "G-B1TPHG4P66"
+}
+
+firebase.initializeApp(config)
+
 Vue.use(VueSweetalert2, options);
-// Vue.use({
-//   // this is the required "install" method for Vue plugins
-//   install (Vue) {
-//     Vue.swal = swal
-//     Vue.prototype.$swal = swal
-//   }
-// })
 
 new Vue({ 
   render: h => h(App), 
   router,
   store,
-  vuetify, 
+  vuetify,
   components: { App } 
 }).$mount('#app')
-
-// export default function (Vue, { head }) {
-//   head.link.push({
-//     rel: 'stylesheet',
-//     href: 'https://fonts.googleapis.com/css?family=Iceland'
-//   })
-// }
