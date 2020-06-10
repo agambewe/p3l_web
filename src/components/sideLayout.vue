@@ -170,6 +170,11 @@ export default {
                 });
             }
         },
+        saveToken(currentToken) {
+            var uri = this.$apiUrl + '/produk-token/' + currentToken
+            this.$http.get(uri).then(response => {
+            })
+        },
         setTokenSentToServer(sent) {
 	        localStorage.setItem('sentToServer', sent ? 1 : 0);
         },
@@ -184,6 +189,7 @@ export default {
             messaging.usePublicVapidKey("BJkk2-iNdhp-oABmlwo0C9i07hQVmS07_z78SzNYn29J5g1_00KljLAa6JTSX0eh-HL2JyWF4GeoNgn44gs52_A");
             messaging.getToken().then((currentToken) => {
                 if (currentToken) {
+                    this.saveToken(currentToken);
                     console.log(currentToken)
                     this.setTokenSentToServer(true);
                 } else {
@@ -192,7 +198,6 @@ export default {
                 }
                 }).catch((err) => {
                     console.log('An error occurred while retrieving token. ', err);
-                    showToken('Error retrieving Instance ID token. ', err);
                     setTokenSentToServer(false);
                 });
             },

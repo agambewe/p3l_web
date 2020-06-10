@@ -361,9 +361,11 @@ export default {
             changeId: "transaksi/changeId",
         }),
         cekNotif() {
-            var uri = this.$apiUrl + '/produk-notif/'
-            this.$http.get(uri).then(response => {
-            })
+            var Window
+            // window.open(this.$apiUrl + '/produk-notif/','_blank');
+            var url = this.$apiUrl + '/produk-notif/'
+                var Window = window.open( 
+                url, "_blank");
         },
         addRow: function() {
             this.rows.push(
